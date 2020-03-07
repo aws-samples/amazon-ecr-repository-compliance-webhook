@@ -9,7 +9,7 @@ phases:
     runtime-versions:
       golang: 1.13
     commands:
-      - pip install aws-sam-cli cfn-lint
+      - pip install -U aws-sam-cli cfn-lint aws-sam-translator
       - sed -i '3s/go 1.14/go 1.13/' go.mod # Until CodeBuild supports Go 1.14
       - mkdir -p $ROOTPATH
       - go get golang.org/x/lint/golint
