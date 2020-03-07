@@ -1,4 +1,3 @@
-![](https://codebuild.us-east-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiYTJIcFJ2d1NiNnNTYUs4VEFGNVlQbzhOdXF1aWcrdHhKdXVwR2h5SjRONVBDMmtnRXFlRmF5NFAwN1dIdUFGcWc1RHlOSjMra3YvZFlqeGNZbSszSVlzPSIsIml2UGFyYW1ldGVyU3BlYyI6InhDL1JTOW9wWC9QWUw0ZDAiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
 [![][sar-logo]](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:273450712882:applications~ecr-repository-compliance-webhook)
 
 
@@ -6,18 +5,20 @@
 [sar-logo]: https://img.shields.io/badge/Serverless%20Application%20Repository-View-FF9900?logo=amazon%20aws&style=flat-square
 
 # ecr-repository-compliance-webhook
->A Kubernetes validating admission webhook: Deny Pods with ECR container images that don't enforce tag immutability and image scanning
+>A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny resources with ECR images that don't enforce tag immutability and image scanning
 
-This AWS Serverless Application Repository app will create an Amazon API Gateway and an AWS Lambda Function that act as the backend for a Kubernetes ValidatingWebhookConfiguration. The function will deny Pods that create containers which come from ECR repositories that:
+This AWS Serverless Application Repository app will create an Amazon API Gateway and an AWS Lambda Function that act as the backend for a Kubernetes ValidatingWebhookConfiguration. The function will deny Pods that create containers using images which come from ECR repositories that:
 1. Do not have tag immutability enabled
 2. Do not have image scanning enabled
 
-<!-- ![architecture](https://raw.githubusercontent.com/swoldemi/ecr-repository-compliance-webhook/master/screenshots/architecture.png) -->
+Additionally, If the images do not come from ECR at all, they will be also be **denied from running in the cluster**.
+
+![architecture](https://raw.githubusercontent.com/swoldemi/ecr-repository-compliance-webhook/master/screenshots/architecture.png)
 
 ## Usage
 To use this SAR application you will:
 1. Deploy the application
-2. Configure and deploy the `ValidatingWebhookConfiguration` resource into your Kubernetes cluster (EKS or otherwise). The cluster must have this plugin enabled and be have support for the admissionregistration.k8s.io/v1beta1 API. ee [here](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) for details.
+2. Configure and deploy the `ValidatingWebhookConfiguration` resource into your Kubernetes cluster (EKS or otherwise). The cluster must have this plugin enabled and be have support for the admissionregistration.k8s.io/v1beta1 API. See [here](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) for details.
 
 ### Deploying the Lambda
 It is recommended that you deploy this Lambda function directly from the AWS Serverless Application Repository. It is also possible to deploy this function using:
@@ -58,7 +59,7 @@ This application does not require any configuration. You simply need to deploy i
 Have an idea for a feature to enhance this serverless application? Open an [issue](https://github.com/swoldemi/ecr-repository-compliance-webhook/issues) or [pull request](https://github.com/swoldemi/ecr-repository-compliance-webhook/pulls)!
 
 ### Development
-This application has been developed, built, and testing against [Go 1.14](https://golang.org/dl/), the latest version of the [Serverless Application Model CLI](https://github.com/awslabs/aws-sam-cli), and the latest version of the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html), Kubernetes version 1.14, and [kubectl 1.17](NewResponseFromRequest). A [Makefile](./Makefile) has been provided for convenience.
+This application has been developed, built, and testing against [Go 1.14](https://golang.org/dl/), the latest version of the [Serverless Application Model CLI](https://github.com/awslabs/aws-sam-cli), and the latest version of the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html), Kubernetes version 1.14, Kubernetes version 1.15, and [kubectl 1.17](NewResponseFromRequest). A [Makefile](./Makefile) has been provided for convenience.
 
 ```
 make check
@@ -71,14 +72,16 @@ make destroy
 ```
 
 ## To Do
-1. Expose configuration via annotations
+1. Expose configuration via annotations/labels
 2. [Authenticate apiserver the server](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#authenticate-apiservers)
-3. Move to the admissionregistration.k8s.io/v1 API when EKS supports k8s v1.16 and drops v1.14
+3. Emit metric on deny, to CloudWatch
+4. Move to the admissionregistration.k8s.io/v1 API when EKS supports k8s v1.17 and drops v1.14
 
 ## References
-BanzaiCloud - In-depth introduction to Kubernetes admission webhooks: https://banzaicloud.com/blog/k8s-admission-webhooks/
-ValidatingWebhookConfiguration API Documentation - https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#validatingwebhookconfiguration-v1beta1-admissionregistration-k8s-io
-Dynamic Admission Control - https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
+- BanzaiCloud - In-depth introduction to Kubernetes admission webhooks: https://banzaicloud.com/blog/k8s-admission-webhooks/
+- ValidatingWebhookConfiguration API Documentation - https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#validatingwebhookconfiguration-v1beta1-admissionregistration-k8s-io
+- Dynamic Admission Control - https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
+- Official Kubernetes example: https://github.com/kubernetes/kubernetes/blob/v1.15.0/test/images/webhook/scheme.go
 
 ## Acknowledgements
 [@jicowan](https://github.com/jicowan) for inspiration: https://github.com/jicowan/ecr-validation-webhook
