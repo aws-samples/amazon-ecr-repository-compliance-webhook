@@ -6,13 +6,11 @@ metadata:
     app: ecr-repository-compliance-webhook
 webhooks:
   - name: ecrpolicies.amazonaws.com
+    failurePolicy: Fail # v1beta1 default is Ignore 
     clientConfig:
-      url: https://"${APIGW}"/check-repos
+      url: https://<YOUR_APIGATEWAY_ID>.execute-api.<YOUR_REGION>.amazonaws.com/Prod/check-image-compliance
     rules:
-      - apiGroups: ["apps"]
+      - apiGroups: [""]
         apiVersions: ["v1"]
         operations: ["CREATE"]
         resources: ["pods"]
-    namespaceSelector:
-      matchLabels:
-        ecr-repository-compliance-webhook: enabled
