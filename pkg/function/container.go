@@ -36,7 +36,7 @@ func (c *Container) GetHandler() Handler {
 		response := webhook.NewResponseFromRequest(request)
 		if err != nil {
 			log.Errorf("Error creating request from event: %v", err)
-			return response.FailValidation(500, err)
+			return response.FailValidation(406, err)
 		}
 
 		pod, err := request.UnmarshalPod()
@@ -53,17 +53,17 @@ func (c *Container) GetHandler() Handler {
 		repos, err := webhook.ParseRepositories(pod)
 		if err != nil {
 			log.Errorf("Error extracting repositories: %v", err)
-			return response.FailValidation(500, err)
+			return response.FailValidation(406, err)
 		}
 
 		compliant, err := c.BatchCheckRepositoryCompliance(ctx, repos)
 		if err != nil {
 			log.Errorf("Error during compliance check: %v", err)
-			return response.FailValidation(500, err)
+			return response.FailValidation(406, err)
 		}
 
 		if !compliant {
-			return response.FailValidation(403, ErrFailedCompliance)
+			return response.FailValidation(406, ErrFailedCompliance)
 		}
 		return response.PassValidation()
 	}

@@ -48,7 +48,7 @@ func (r *Response) FailValidation(code int32, failure error) (events.APIGatewayP
 		Status:  metav1.StatusFailure,
 		Message: failure.Error(),
 		// Need a better way to Code with Reason; maybe use grpc code mappings?
-		Reason: metav1.StatusReasonUnknown,
+		Reason: metav1.StatusReasonNotAcceptable,
 		Code:   code,
 	}
 	body, err := marshalResponse(r.Admission)
