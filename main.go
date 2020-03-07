@@ -30,11 +30,6 @@ func main() {
 		log.Fatalf("Error configuring X-Ray: %v\n", err)
 		return
 	}
-
 	xray.AWS(ecrSvc.Client)
-	if err != nil {
-		log.Fatalf("Error initializing Lambda environment: %v\n", err)
-		return
-	}
-	lambda.Start(function.NewFunctionContainer(ecrSvc).GetHandler())
+	lambda.Start(function.NewContainer(ecrSvc).GetHandler())
 }
