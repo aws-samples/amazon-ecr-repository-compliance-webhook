@@ -123,7 +123,6 @@ func TestHandler(t *testing.T) {
 				ecrSvc.On("DescribeRepositoriesWithContext",
 					ctx,
 					&ecr.DescribeRepositoriesInput{
-						MaxResults:      aws.Int64(1),
 						RepositoryNames: []*string{tt.args.repo.RepositoryName},
 					},
 				).Return(&ecr.DescribeRepositoriesOutput{Repositories: []*ecr.Repository{tt.args.repo}}, nil)

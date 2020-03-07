@@ -17,7 +17,6 @@ import (
 // 3. Has image scanning enabled
 func (c *Container) CheckRepositoryCompliance(ctx context.Context, repository string) (bool, error) {
 	input := &ecr.DescribeRepositoriesInput{
-		MaxResults:      aws.Int64(1),
 		RepositoryNames: []*string{aws.String(repository)},
 	}
 	if err := input.Validate(); err != nil {
