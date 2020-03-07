@@ -38,9 +38,6 @@ var (
 	// ErrInvalidAdmission ...
 	ErrInvalidAdmission = errors.New("webhook: admission request was nil")
 
-	// ErrContainersNotFound ...
-	ErrContainersNotFound = errors.New("webhook: no containers found in pod specification")
-
 	// ErrInvalidContainer ...
 	ErrInvalidContainer = errors.New("webhook: container is not from ecr")
 
@@ -116,14 +113,10 @@ func ParseRepositories(pod *corev1.Pod) ([]string, error) {
 		repos      []string
 		containers = append(pod.Spec.Containers, pod.Spec.InitContainers...)
 	)
-	if len(containers) == 0 {
-		return nil, ErrContainersNotFound
-	}
 	for _, c := range containers {
-		if c.Image == "" || !strings.Contains(c.Image, amazonawscom) {
-			return nil, ErrInvalidContainer
+		if c.Image != "" && strings.Contains(c.Image, amazonawscom) {
+			repos = append(repos, strings.SplitN(strings.Split(c.Image, ":")[0], "/", 2)[1])
 		}
-		repos = append(repos, strings.SplitN(strings.Split(c.Image, ":")[0], "/", 2)[1])
 	}
 	return repos, nil
 }
