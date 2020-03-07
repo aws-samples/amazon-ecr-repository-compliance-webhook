@@ -4,7 +4,7 @@ Transform: AWS::Serverless-2016-10-31
 Metadata:
   AWS::ServerlessRepo::Application:
     Name: ecr-repository-compliance-webhook
-    Description: "Create snapshots of EBS volumes, at an interval, with cross-account support."
+    Description: "A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny resources with ECR images that don't enforce tag immutability and image scanning"
     Author: Simon Woldemichael
     SpdxLicenseId: Apache-2.0
     LicenseUrl: LICENSE
@@ -14,8 +14,13 @@ Metadata:
     SemanticVersion: 1.0.0
     SourceCodeUrl: https://github.com/swoldemi/ecr-repository-compliance-webhook
 
-Parameters:
-# TODO
+Globals:
+  Function:
+    AutoPublishAlias: live
+  Api:
+    Cors:
+      AllowHeaders: "'Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization'"
+      AllowOrigin: "'*'"
 
 Resources:
   ECRRepositoryComplianceWebhookExecutionRole:
@@ -36,15 +41,18 @@ Resources:
         - PolicyDocument:
             Statement:
               - Action:
-                  - ec2:CreateSnapshot
-                  - ec2:CreateTags
-                  - ec2:DescribeVolumes
+                  - ecr:DescribeRepositories
                   - cloudwatch:PutMetricData
                   - xray:PutTraceSegments
                 Effect: Allow
                 Resource: "*"
             Version: "2012-10-17"
           PolicyName: ECRRepositoryComplianceWebhookLambdaPolicy
+
+  ECRRepositoryComplianceWebhookAPIGateway:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: Prod
 
   ECRRepositoryComplianceWebhookFunction:
     Type: AWS::Serverless::Function
@@ -56,18 +64,26 @@ Resources:
       Tracing: Active
       MemorySize: 128
       Role: !GetAtt ECRRepositoryComplianceWebhookExecutionRole.Arn
-      Timeout: 15
-      # TODO - Add Gateway
+      Timeout: 30
+      Events:
+        ValidationEvent:
+          Type: HttpApi
+          Properties:
+            Path: /check-image-compliance
+            Method: post
+            ApiId: !Ref ECRRepositoryComplianceWebhookAPIGateway
 
-  
-
- 
+  ConfigAPIGatewayLambdaInvoke:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ECRRepositoryComplianceWebhookFunction
+      Principal: apigateway.amazonaws.com
 
 Outputs:
   LambdaFunctionARN:
     Description: ECRRepositoryComplianceWebhook Lambda Function ARN
     Value: !GetAtt ECRRepositoryComplianceWebhookFunction.Arn
   APIGatewayEndpoint:
-    # TODO
-
-
+    Description: "ValidatingWebhookConfiguration invocation URL"
+    Value: !Sub "https://${ECRRepositoryComplianceWebhookAPIGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
