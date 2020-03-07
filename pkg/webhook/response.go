@@ -86,6 +86,10 @@ func (r *Response) PassValidation() (events.APIGatewayProxyResponse, error) {
 
 func marshalResponse(admission *v1beta1.AdmissionResponse) ([]byte, error) {
 	review := &v1beta1.AdmissionReview{
+		TypeMeta: metav1.TypeMeta{
+			Kind: "AdmissionReview",
+			APIVersion: "admission.k8s.io/v1beta1",
+		},
 		Response: admission,
 	}
 	out, err := json.Marshal(review)
