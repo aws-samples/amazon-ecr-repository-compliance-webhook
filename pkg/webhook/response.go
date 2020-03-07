@@ -2,13 +2,19 @@ package webhook
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/aws/aws-lambda-go/events"
 	v1beta1 "k8s.io/api/admission/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var defaultHeaders = map[string]string{"Content-Type": "application/json"}
+var (
+	defaultHeaders = map[string]string{"Content-Type": "application/json"}
+
+	// ErrMissingFailure ...
+	ErrMissingFailure = errors.New("webhook: reached invalidate state, no failure reaon found")
+)
 
 // Response encapsulates the AdmissionResponse sent to API Gateway
 type Response struct {
@@ -28,6 +34,15 @@ func NewResponseFromRequest(r *Request) *Response {
 // FailValidation populates the AdmissionResponse with the failure contents
 // (message and error) and returns the AdmissionReview JSON body response for API Gateway.
 func (r *Response) FailValidation(code int32, failure error) (events.APIGatewayProxyResponse, error) {
+	out := events.APIGatewayProxyResponse{
+		Headers:    defaultHeaders,
+		StatusCode: int(code),
+	}
+	if failure == nil {
+		out.Body = ErrMissingFailure.Error()
+		return out, ErrMissingFailure
+	}
+
 	r.Admission.Allowed = false
 	r.Admission.Result = &metav1.Status{
 		Status:  metav1.StatusFailure,
@@ -37,10 +52,6 @@ func (r *Response) FailValidation(code int32, failure error) (events.APIGatewayP
 		Code:   code,
 	}
 	body, err := marshalResponse(r.Admission)
-	out := events.APIGatewayProxyResponse{
-		Headers:    defaultHeaders,
-		StatusCode: int(code),
-	}
 	if err != nil {
 		out.Body = err.Error()
 		return out, err
@@ -55,7 +66,7 @@ func (r *Response) PassValidation() (events.APIGatewayProxyResponse, error) {
 	r.Admission.Allowed = true
 	r.Admission.Result = &metav1.Status{
 		Status:  metav1.StatusSuccess,
-		Message: "Pod contains compliant ECR repositories.",
+		Message: "pod contains compliant ecr repositories",
 		Code:    200,
 	}
 	out := events.APIGatewayProxyResponse{
