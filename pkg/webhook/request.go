@@ -41,6 +41,9 @@ var (
 	// ErrContainersNotFound ...
 	ErrContainersNotFound = errors.New("webhook: no containers found in pod specification")
 
+	// ErrInvalidContainer ...
+	ErrInvalidContainer = errors.New("webhook: container is not from ecr")
+
 	ignoredNamespaces = []string{
 		metav1.NamespaceSystem,
 	}
@@ -67,8 +70,9 @@ func NewRequestFromEvent(event events.APIGatewayProxyRequest) (*Request, error) 
 	if val != "application/json" {
 		return nil, ErrInvalidContentType
 	}
-	var review *v1beta1.AdmissionReview
-	if _, _, err := deserializer.Decode([]byte(event.Body), &schema.GroupVersionKind{}, review); err != nil {
+
+	var review v1beta1.AdmissionReview
+	if err := DeserializeReview(event.Body, &review); err != nil {
 		return nil, err
 	}
 	return &Request{Admission: review.Request}, nil
@@ -95,8 +99,8 @@ func (r *Request) UnmarshalPod() (*corev1.Pod, error) {
 }
 
 // InCriticalNamespace checks that the request was for a resource
-// that is being deployed into a cricial name space; e.g. kube-system
-func (r *Request) InCriticalNamespace(pod *corev1.Pod) bool {
+// that is being deployed into a cricial name space; e.g. kube-system.
+func InCriticalNamespace(pod *corev1.Pod) bool {
 	for _, n := range ignoredNamespaces {
 		if pod.Namespace == n {
 			return true
@@ -105,20 +109,30 @@ func (r *Request) InCriticalNamespace(pod *corev1.Pod) bool {
 	return false
 }
 
-// ListECRImages lists the containers in the Pod spec which contain
+// ParseRepositories returns the repositories in the Pod spec which contain
 // images that are from Amazon ECR.
-func (r *Request) ListECRImages(pod *corev1.Pod) ([]string, error) {
+func ParseRepositories(pod *corev1.Pod) ([]string, error) {
 	var (
-		images     []string
+		repos      []string
 		containers = append(pod.Spec.Containers, pod.Spec.InitContainers...)
 	)
 	if len(containers) == 0 {
 		return nil, ErrContainersNotFound
 	}
 	for _, c := range containers {
-		if c.Image != "" && strings.Contains(c.Image, amazonawscom) {
-			images = append(images, c.Image)
+		if c.Image == "" || !strings.Contains(c.Image, amazonawscom) {
+			return nil, ErrInvalidContainer
 		}
+		repos = append(repos, strings.SplitN(strings.Split(c.Image, ":")[0], "/", 2)[1])
 	}
-	return images, nil
+	return repos, nil
+}
+
+// DeserializeReview is a helper for deserializing a JSON encoded string
+// into a Kubernetes Admission Review.
+func DeserializeReview(body string, out *v1beta1.AdmissionReview) error {
+	if _, _, err := deserializer.Decode([]byte(body), nil, out); err != nil {
+		return err
+	}
+	return nil
 }
