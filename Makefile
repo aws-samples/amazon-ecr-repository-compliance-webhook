@@ -2,6 +2,8 @@ all : tmpl check build sam-package sam-deploy sam-tail-logs
 .PHONY: all
 
 S3_BUCKET ?= swoldemi-tmp
+DEFAULT_REGION ?= us-east-2
+DEFAULT_STACK_NAME ?= ecr-repository-compliance-webhook
 
 GOBIN := $(GOPATH)/bin
 GOIMPORTS := $(GOBIN)/goimports
@@ -11,7 +13,7 @@ GOMETALINTER := $(GOBIN)/gometalinter
 
 .PHONY: build
 build: clean
-	 go build -v -a -installsuffix cgo -tags netgo -ldflags '-w -extldflags "-static"' main.go
+	go build -v -a -installsuffix cgo -tags netgo -ldflags '-w -extldflags "-static"' main.go
 
 .PHONY: test
 test: clean
@@ -46,11 +48,11 @@ sam-package:
 .PHONY: sam-deploy
 sam-deploy:
 	sam deploy \
-	--parameter-overrides Interval=$(DEFAULT_INTERVAL) IntervalUnit=$(DEFAULT_INTERVAL_UNIT) Region=$(DEFAULT_REGION) VolumeID=$(DEFAULT_VOLUME_ID)  \
+	--region $(DEFAULT_REGION) \
 	--template-file ./packaged.yaml \
 	--stack-name $(DEFAULT_STACK_NAME) \
 	--capabilities CAPABILITY_IAM
-	aws --region $(DEFAULT_REGION) cloudformation describe-stacks --stack-name $(DEFAULT_STACK_NAME) --query 'Stacks[0].Outputs'
+	aws --region $(DEFAULT_REGION) cloudformation describe-stacks --stack-name $(DEFAULT_STACK_NAME) --query 'Stacks[0].Outputs' 
 
 .PHONY: sam-publish
 sam-publish:
