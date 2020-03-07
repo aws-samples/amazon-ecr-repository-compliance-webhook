@@ -14,9 +14,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"github.com/swoldemi/ecr-repository-compliance-webhook/pkg/function"
-	"github.com/swoldemi/ecr-repository-compliance-webhook/pkg/webhook"
 	"github.com/swoldemi/ecr-repository-compliance-webhook/testdata"
-	v1beta1 "k8s.io/api/admission/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -128,22 +126,13 @@ func TestHandler(t *testing.T) {
 				).Return(&ecr.DescribeRepositoriesOutput{Repositories: []*ecr.Repository{tt.args.repo}}, nil)
 			}
 
-			response, err := h(context.Background(), tt.args.event)
+			review, err := h(context.Background(), tt.args.event)
 			if err != nil {
 				t.Fatalf("Error during request for image: %v", err)
 			}
-			t.Logf("Got response body: %#+v", response.Body)
-
+			t.Logf("Got review body: %#+v", review)
 			require.Nil(t, err)
-			if tt.status == metav1.StatusFailure {
-				require.NotEqual(t, response.StatusCode, 200)
-			}
-
-			var admission v1beta1.AdmissionReview
-			if err := webhook.DeserializeReview(response.Body, &admission); err != nil {
-				t.Fatalf("Error deseralizing AdmissionReview: %v", err)
-			}
-			require.Equal(t, tt.status, admission.Response.Result.Status)
+			require.Equal(t, tt.status, review.Response.Result.Status)
 			ecrSvc.AssertExpectations(t)
 		})
 	}

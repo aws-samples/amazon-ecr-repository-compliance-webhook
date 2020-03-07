@@ -1,20 +1,14 @@
 package webhook
 
 import (
-	"encoding/json"
 	"errors"
 
-	"github.com/aws/aws-lambda-go/events"
 	v1beta1 "k8s.io/api/admission/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var (
-	defaultHeaders = map[string]string{"Content-Type": "application/json"}
-
-	// ErrMissingFailure ...
-	ErrMissingFailure = errors.New("webhook: reached invalidate state, no failure reaon found")
-)
+// ErrMissingFailure ...
+var ErrMissingFailure = errors.New("webhook: reached invalidate state, no failure reaon found")
 
 // Response encapsulates the AdmissionResponse sent to API Gateway
 type Response struct {
@@ -33,14 +27,9 @@ func NewResponseFromRequest(r *Request) *Response {
 
 // FailValidation populates the AdmissionResponse with the failure contents
 // (message and error) and returns the AdmissionReview JSON body response for API Gateway.
-func (r *Response) FailValidation(code int32, failure error) (events.APIGatewayProxyResponse, error) {
-	out := events.APIGatewayProxyResponse{
-		Headers:    defaultHeaders,
-		StatusCode: int(code),
-	}
+func (r *Response) FailValidation(code int32, failure error) (*v1beta1.AdmissionReview, error) {
 	if failure == nil {
-		out.Body = ErrMissingFailure.Error()
-		return out, ErrMissingFailure
+		return nil, ErrMissingFailure
 	}
 
 	r.Admission.Allowed = false
@@ -51,50 +40,27 @@ func (r *Response) FailValidation(code int32, failure error) (events.APIGatewayP
 		Reason: metav1.StatusReasonNotAcceptable,
 		Code:   code,
 	}
-	body, err := marshalResponse(r.Admission)
-	if err != nil {
-		out.Body = err.Error()
-		return out, err
-	}
-	out.Body = string(body)
-	return out, nil
+	return respond(r.Admission), nil
 }
 
 // PassValidation populates the AdmissionResponse with the pass contents
 // (message) and returns the AdmissionReview JSON response for API Gateway.
-func (r *Response) PassValidation() (events.APIGatewayProxyResponse, error) {
+func (r *Response) PassValidation() *v1beta1.AdmissionReview {
 	r.Admission.Allowed = true
 	r.Admission.Result = &metav1.Status{
 		Status:  metav1.StatusSuccess,
 		Message: "pod contains compliant ecr repositories",
 		Code:    200,
 	}
-	out := events.APIGatewayProxyResponse{
-		Headers: defaultHeaders,
-	}
-
-	body, err := marshalResponse(r.Admission)
-	if err != nil {
-		out.StatusCode = 500
-		out.Body = err.Error()
-		return out, err
-	}
-	out.StatusCode = 200
-	out.Body = string(body)
-	return out, nil
+	return respond(r.Admission)
 }
 
-func marshalResponse(admission *v1beta1.AdmissionResponse) ([]byte, error) {
-	review := &v1beta1.AdmissionReview{
+func respond(admission *v1beta1.AdmissionResponse) *v1beta1.AdmissionReview {
+	return &v1beta1.AdmissionReview{
 		TypeMeta: metav1.TypeMeta{
-			Kind: "AdmissionReview",
+			Kind:       "AdmissionReview",
 			APIVersion: "admission.k8s.io/v1beta1",
 		},
 		Response: admission,
 	}
-	out, err := json.Marshal(review)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
