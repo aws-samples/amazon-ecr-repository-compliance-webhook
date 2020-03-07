@@ -64,7 +64,7 @@ Resources:
       Tracing: Active
       MemorySize: 128
       Role: !GetAtt ECRRepositoryComplianceWebhookExecutionRole.Arn
-      Timeout: 30
+      Timeout: 15
       Events:
         ValidationEvent:
           Type: HttpApi
