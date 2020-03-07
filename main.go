@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -11,7 +13,12 @@ import (
 )
 
 func main() {
-	log.Info("Starting Lambda in live environment")
+	log.Infof(
+		"Starting Lambda version %s with handler %s",
+		os.Getenv("AWS_LAMBDA_FUNCTION_VERSION"),
+		os.Getenv("_HANDLER"),
+	)
+
 	sess, err := session.NewSessionWithOptions(
 		session.Options{
 			Config: aws.Config{
