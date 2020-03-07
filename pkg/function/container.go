@@ -1,9 +1,9 @@
 // Package function contains library units for the ecr-repository-compliance-webhook Lambda function.
-// Referenced: https://github.com/kubernetes/kubernetes/blob/v1.13.0/test/images/webhook/main.go.
 package function
 
 import (
 	"context"
+	"errors"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/service/ecr/ecriface"
@@ -11,14 +11,17 @@ import (
 	"github.com/swoldemi/ecr-repository-compliance-webhook/pkg/webhook"
 )
 
-// FunctionContainer contains the dependencies and business logic for the ecr-repository-compliance-webhook Lambda function.
-type FunctionContainer struct {
+// ErrFailedCompliance ...
+var ErrFailedCompliance = errors.New("webhook: repository fails ecr criteria")
+
+// Container contains the dependencies and business logic for the ecr-repository-compliance-webhook Lambda function.
+type Container struct {
 	ECR ecriface.ECRAPI
 }
 
-// NewFunctionContainer creates a new FunctionContainer.
-func NewFunctionContainer(ecrSvc ecriface.ECRAPI) *FunctionContainer {
-	return &FunctionContainer{
+// NewContainer creates a new function Container.
+func NewContainer(ecrSvc ecriface.ECRAPI) *Container {
+	return &Container{
 		ECR: ecrSvc,
 	}
 }
@@ -27,7 +30,7 @@ func NewFunctionContainer(ecrSvc ecriface.ECRAPI) *FunctionContainer {
 type Handler func(context.Context, events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error)
 
 // GetHandler returns the function handler for ecr-repository-compliance-webhook.
-func (f *FunctionContainer) GetHandler() Handler {
+func (c *Container) GetHandler() Handler {
 	return func(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 		request, err := webhook.NewRequestFromEvent(event)
 		response := webhook.NewResponseFromRequest(request)
@@ -41,7 +44,27 @@ func (f *FunctionContainer) GetHandler() Handler {
 			log.Errorf("Error unmarshalling Pod: %v", err)
 			return response.FailValidation(406, err)
 		}
-		_ = pod
+
+		if webhook.InCriticalNamespace(pod) {
+			log.Info("Pod is in critical namespace, automatically passing")
+			return response.PassValidation()
+		}
+
+		repos, err := webhook.ParseRepositories(pod)
+		if err != nil {
+			log.Errorf("Error extracting repositories: %v", err)
+			return response.FailValidation(500, err)
+		}
+
+		compliant, err := c.BatchCheckRepositoryCompliance(ctx, repos)
+		if err != nil {
+			log.Errorf("Error during compliance check: %v", err)
+			return response.FailValidation(500, err)
+		}
+
+		if !compliant {
+			return response.FailValidation(403, ErrFailedCompliance)
+		}
 		return response.PassValidation()
 	}
 }
