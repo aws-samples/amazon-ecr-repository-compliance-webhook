@@ -20,8 +20,8 @@ test: clean
 # Static code analysis tooling and checks
 .PHONY: check
 check:
-	goimports -w -l -e .
-	gofmt -s -w .
+	gofumports -w -l -e .
+	gofumpt -s -w .
 	golangci-lint run ./... \
 		-E goconst \
 		-E gocyclo \

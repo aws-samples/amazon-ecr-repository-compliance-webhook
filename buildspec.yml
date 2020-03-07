@@ -13,7 +13,8 @@ phases:
       - sed -i '3s/go 1.14/go 1.13/' go.mod # Until CodeBuild supports Go 1.14
       - mkdir -p $ROOTPATH
       - go get golang.org/x/lint/golint
-      - go get golang.org/x/tools/cmd/goimports
+      - go get mvdan.cc/gofumpt/gofumports
+      - go get mvdan.cc/gofumpt
       - curl -L https://git.io/vp6lP | bash -s -- -b /go/bin
       - go get github.com/golangci/golangci-lint/cmd/golangci-lint
       - go get github.com/gojp/goreportcard/cmd/goreportcard-cli
