@@ -1,3 +1,4 @@
+![](https://codebuild.us-east-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiWGYzaDl0TDdOV0NEa3E2Z2xtUXJwakZOSENXWWNyNlQzNFhsOW1NaUJlYjdXMDVmOEs2bENBNVR4V3FmdG85YXpJL013UTBRcUYyeWlpQXhkODZoMDZjPSIsIml2UGFyYW1ldGVyU3BlYyI6ImExUDltSU5jdTF5UHlsR0giLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
 [![][sar-logo]](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:273450712882:applications~ecr-repository-compliance-webhook)
 
 
@@ -5,11 +6,11 @@
 [sar-logo]: https://img.shields.io/badge/Serverless%20Application%20Repository-View-FF9900?logo=amazon%20aws&style=flat-square
 
 # ecr-repository-compliance-webhook
->A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny resources with ECR images that don't enforce tag immutability and image scanning
+>A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny resources with ECR images that don't enforce tag immutability and image scanning on push
 
 This AWS Serverless Application Repository app will create an Amazon API Gateway and an AWS Lambda Function that act as the backend for a Kubernetes ValidatingWebhookConfiguration. The function will deny Pods that create containers using images which come from ECR repositories that:
 1. Do not have tag immutability enabled
-2. Do not have image scanning enabled
+2. Do not have image scan on push enabled
 
 Additionally, If the images do not come from ECR at all, they will be also be **denied from running in the cluster**.
 

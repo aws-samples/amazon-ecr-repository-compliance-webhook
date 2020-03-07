@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
       - name: test
-        image: nginx:latest
+        image: nginx:latest # Also test with ECR images you own: example aws_account_id.dkr.ecr.region.amazonaws.com/image-name:latest
         ports:
         - containerPort: 80

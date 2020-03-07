@@ -13,8 +13,8 @@ import (
 // CheckRepositoryCompliance checks if the repository for the image
 // that was just sent to the is compliant.
 // 1. Comes from ECR
-// 2. Has image tagging enabled
-// 3. Has image scanning enabled
+// 2. Has image tag immutability enabled
+// 3. Has image scan on push enabled
 func (c *Container) CheckRepositoryCompliance(ctx context.Context, repository string) (bool, error) {
 	input := &ecr.DescribeRepositoriesInput{
 		RepositoryNames: []*string{aws.String(repository)},
