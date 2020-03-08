@@ -4,7 +4,7 @@ Transform: AWS::Serverless-2016-10-31
 Metadata:
   AWS::ServerlessRepo::Application:
     Name: ecr-repository-compliance-webhook
-    Description: "A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny resources with ECR images that don't enforce tag immutability and image scanning"
+    Description: "A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny Pods with container images that don't come from ECR, don't enforce tag immutability, or don't enforce scanning on push"
     Author: Simon Woldemichael
     SpdxLicenseId: Apache-2.0
     LicenseUrl: LICENSE
