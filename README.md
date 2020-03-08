@@ -93,4 +93,4 @@ make destroy
 [@jicowan](https://github.com/jicowan) for inspiration: https://github.com/jicowan/ecr-validation-webhook
 
 ## License
-[MIT No Attribution (MIT-0)](https://spdx.org/licenses/MIT-0.html)
+[Apache License 2.0](https://spdx.org/licenses/Apache-2.0.html)
