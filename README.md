@@ -6,7 +6,7 @@
 [sar-logo]: https://img.shields.io/badge/Serverless%20Application%20Repository-View-FF9900?logo=amazon%20aws&style=flat-square
 
 # ecr-repository-compliance-webhook
->A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny resources with ECR images that don't enforce tag immutability and image scanning on push
+>A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny Pods with container images that don't come from ECR, don't enforce tag immutability, or don't enforce scanning on push
 
 This AWS Serverless Application Repository app will create an Amazon API Gateway and an AWS Lambda Function that act as the backend for a Kubernetes ValidatingWebhookConfiguration. The function will deny Pods that create containers using images which come from ECR repositories that:
 1. Do not have tag immutability enabled
