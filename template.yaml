@@ -9,7 +9,7 @@ Metadata:
     SpdxLicenseId: Apache-2.0
     LicenseUrl: LICENSE
     ReadmeUrl: README.md
-    Labels: ["kubernetes", "validating", "admission", "webhook", "eks"]
+    Labels: ["kubernetes", "validating", "admission", "webhook", "eks", "ecr"]
     HomePageUrl: https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook
     SemanticVersion: 1.0.0
     SourceCodeUrl: https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook
