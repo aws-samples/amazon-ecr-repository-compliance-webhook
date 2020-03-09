@@ -1,4 +1,4 @@
-// Package function contains library units for the ecr-repository-compliance-webhook Lambda function.
+// Package function contains library units for the amazon-ecr-repository-compliance-webhook Lambda function.
 package function
 
 import (
@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/service/ecr/ecriface"
 	log "github.com/sirupsen/logrus"
-	"github.com/swoldemi/ecr-repository-compliance-webhook/pkg/webhook"
+	"github.com/swoldemi/amazon-ecr-repository-compliance-webhook/pkg/webhook"
 	"k8s.io/api/admission/v1beta1"
 )
 
@@ -20,7 +20,7 @@ var (
 	ErrImagesNotFound = errors.New("webhook: no ecr images found in pod specification")
 )
 
-// Container contains the dependencies and business logic for the ecr-repository-compliance-webhook Lambda function.
+// Container contains the dependencies and business logic for the amazon-ecr-repository-compliance-webhook Lambda function.
 type Container struct {
 	ECR ecriface.ECRAPI
 }
@@ -35,7 +35,9 @@ func NewContainer(ecrSvc ecriface.ECRAPI) *Container {
 // Handler is a type alias for the Lambda handler's function signatire.
 type Handler func(context.Context, events.APIGatewayProxyRequest) (*v1beta1.AdmissionReview, error)
 
-// GetHandler returns the function handler for ecr-repository-compliance-webhook.
+// GetHandler returns the function handler for the amazon-ecr-repository-compliance-webhook.
+// Handler currently assumes that requests are sent from a Kubernetes AdmissionController
+// (i.e. the UID in the AdmissionReview exists).
 func (c *Container) GetHandler() Handler {
 	return func(ctx context.Context, event events.APIGatewayProxyRequest) (*v1beta1.AdmissionReview, error) {
 		request, err := webhook.NewRequestFromEvent(event)

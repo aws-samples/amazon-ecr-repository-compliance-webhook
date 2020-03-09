@@ -3,7 +3,7 @@ all : tmpl check build sam-package sam-deploy sam-tail-logs
 
 S3_BUCKET ?= swoldemi-tmp
 DEFAULT_REGION ?= us-east-2
-DEFAULT_STACK_NAME ?= ecr-repository-compliance-webhook
+DEFAULT_STACK_NAME ?= amazon-ecr-repository-compliance-webhook
 
 GOBIN := $(GOPATH)/bin
 GOIMPORTS := $(GOBIN)/goimports
@@ -64,7 +64,7 @@ stack-describe:
 
 .PHONY: sam-tail-logs
 sam-tail-logs:
-	sam logs --name ecr-repository-compliance-webhook --tail
+	sam logs --name amazon-ecr-repository-compliance-webhook --tail
 
 .PHONY: destroy
 destroy: clean
@@ -85,5 +85,5 @@ sar-public:
 	# update application-id parameter as needed
 	aws serverlessrepo put-application-policy \
 		--region us-east-1 \
-		--application-id arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook \
+		--application-id arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook \
 		--statements Principals=*,Actions=Deploy

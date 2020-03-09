@@ -1,10 +1,9 @@
 // Package testdata contains data for testing.
 package testdata
 
-// https://github.com/alex-leonhardt/k8s-mutate-webhook/blob/master/pkg/mutate/mutate_test.go
-
 // ReviewWithOneImage is a test AdmissionReview used for templating
 // a single container image.
+// Referenced: https://github.com/alex-leonhardt/k8s-mutate-webhook/blob/master/pkg/mutate/mutate_test.go
 const ReviewWithOneImage = `{
 	"kind": "AdmissionReview",
 	"apiVersion": "admission.k8s.io/v1beta1",

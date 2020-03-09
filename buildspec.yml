@@ -3,7 +3,7 @@ env:
   variables:
     GOPATH: /go
     GOBIN: /go/bin
-    ROOTPATH: /go/src/github.com/swoldemi/ecr-repository-compliance-webhook
+    ROOTPATH: /go/src/github.com/swoldemi/amazon-ecr-repository-compliance-webhook
 phases:
   install:
     runtime-versions:

@@ -8,16 +8,16 @@ import (
 )
 
 // ErrMissingFailure ...
-var ErrMissingFailure = errors.New("webhook: reached invalidate state, no failure reaon found")
+var ErrMissingFailure = errors.New("webhook: reached invalid state, no failure reaon found")
 
-// Response encapsulates the AdmissionResponse sent to API Gateway
+// Response encapsulates the AdmissionResponse sent to API Gateway.
 type Response struct {
 	Admission *v1beta1.AdmissionResponse
 }
 
 // NewResponseFromRequest creates a Response from a Request.
+// Assumes request came from Kubernetes and contains UID.
 func NewResponseFromRequest(r *Request) *Response {
-	// TODO: What's the best way to handle no UID?
 	return &Response{
 		Admission: &v1beta1.AdmissionResponse{
 			UID: r.Admission.UID,
@@ -36,7 +36,7 @@ func (r *Response) FailValidation(code int32, failure error) (*v1beta1.Admission
 	r.Admission.Result = &metav1.Status{
 		Status:  metav1.StatusFailure,
 		Message: failure.Error(),
-		// Need a better way to Code with Reason; maybe use grpc code mappings?
+		// Need a better way to Code with Reason; maybe use gRPC code mappings?
 		Reason: metav1.StatusReasonNotAcceptable,
 		Code:   code,
 	}

@@ -14,9 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 )
 
-const (
-	amazonawscom = "amazonaws.com"
-)
+const amazonawscom = "amazonaws.com"
 
 var (
 	runtimeScheme = runtime.NewScheme()
@@ -39,7 +37,7 @@ var (
 	ErrInvalidAdmission = errors.New("webhook: admission request was nil")
 
 	// ErrInvalidContainer ...
-	ErrInvalidContainer = errors.New("webhook: container is not from ecr")
+	ErrInvalidContainer = errors.New("webhook: container image is not from ecr")
 
 	ignoredNamespaces = []string{
 		metav1.NamespaceSystem,

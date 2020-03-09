@@ -1,9 +1,8 @@
-module github.com/swoldemi/ecr-repository-compliance-webhook
+module github.com/swoldemi/amazon-ecr-repository-compliance-webhook
 
 go 1.14
 
 require (
-	github.com/DATA-DOG/go-sqlmock v1.4.1 // indirect
 	github.com/aws/aws-lambda-go v1.15.0
 	github.com/aws/aws-sdk-go v1.29.19
 	github.com/aws/aws-xray-sdk-go v1.0.0-rc.14

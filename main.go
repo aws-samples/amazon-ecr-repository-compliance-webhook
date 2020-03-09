@@ -9,7 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/ecr"
 	"github.com/aws/aws-xray-sdk-go/xray"
 	log "github.com/sirupsen/logrus"
-	"github.com/swoldemi/ecr-repository-compliance-webhook/pkg/function"
+	"github.com/swoldemi/amazon-ecr-repository-compliance-webhook/pkg/function"
 )
 
 func main() {

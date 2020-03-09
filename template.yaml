@@ -3,16 +3,16 @@ Transform: AWS::Serverless-2016-10-31
 
 Metadata:
   AWS::ServerlessRepo::Application:
-    Name: ecr-repository-compliance-webhook
-    Description: "A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny Pods with container images that don't come from ECR, don't enforce tag immutability, or don't enforce scanning on push"
+    Name: amazon-ecr-repository-compliance-webhook
+    Description: "A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny Pods with container images that don't come from Amazon ECR, don't enforce tag immutability, or don't enforce scanning on push"
     Author: Simon Woldemichael
     SpdxLicenseId: Apache-2.0
     LicenseUrl: LICENSE
     ReadmeUrl: README.md
     Labels: ["kubernetes", "validating", "admission", "webhook", "eks"]
-    HomePageUrl: https://github.com/swoldemi/ecr-repository-compliance-webhook
+    HomePageUrl: https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook
     SemanticVersion: 1.0.0
-    SourceCodeUrl: https://github.com/swoldemi/ecr-repository-compliance-webhook
+    SourceCodeUrl: https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook
 
 Globals:
   Api:
@@ -40,7 +40,6 @@ Resources:
             Statement:
               - Action:
                   - ecr:DescribeRepositories
-                  - cloudwatch:PutMetricData
                   - xray:PutTraceSegments
                 Effect: Allow
                 Resource: "*"
@@ -54,9 +53,9 @@ Resources:
 
   ECRRepositoryComplianceWebhookFunction:
     Type: AWS::Serverless::Function
-    Description: Lambda handler for ecr-repository-compliance-webhook
+    Description: Lambda handler for amazon-ecr-repository-compliance-webhook
     Properties:
-      FunctionName: ecr-repository-compliance-webhook
+      FunctionName: amazon-ecr-repository-compliance-webhook
       Handler: main
       Runtime: go1.x
       Tracing: Active

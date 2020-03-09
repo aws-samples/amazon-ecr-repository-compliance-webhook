@@ -1,12 +1,11 @@
 ![](https://codebuild.us-east-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiWGYzaDl0TDdOV0NEa3E2Z2xtUXJwakZOSENXWWNyNlQzNFhsOW1NaUJlYjdXMDVmOEs2bENBNVR4V3FmdG85YXpJL013UTBRcUYyeWlpQXhkODZoMDZjPSIsIml2UGFyYW1ldGVyU3BlYyI6ImExUDltSU5jdTF5UHlsR0giLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
-[![][sar-logo]](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:273450712882:applications~ecr-repository-compliance-webhook)
-
+[![][sar-logo]](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:273450712882:applications~amazon-ecr-repository-compliance-webhook)
 
 [sar-deploy]: https://img.shields.io/badge/Serverless%20Application%20Repository-Deploy%20Now-FF9900?logo=amazon%20aws&style=flat-square
 [sar-logo]: https://img.shields.io/badge/Serverless%20Application%20Repository-View-FF9900?logo=amazon%20aws&style=flat-square
 
-# ecr-repository-compliance-webhook
->A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny Pods with container images that don't come from ECR, don't enforce tag immutability, or don't enforce scanning on push
+# Amazon ECR Repository Compliance Webhook for Kubernetes
+>A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny Pods with container images that don't come from Amazon ECR, don't enforce tag immutability, or don't enforce scanning on push
 
 This AWS Serverless Application Repository app will create an Amazon API Gateway and an AWS Lambda Function that act as the backend for a Kubernetes ValidatingWebhookConfiguration. The function will deny Pods that create containers using images which come from ECR repositories that:
 1. Do not have tag immutability enabled
@@ -14,7 +13,7 @@ This AWS Serverless Application Repository app will create an Amazon API Gateway
 
 Additionally, If the images do not come from ECR at all, they will be also be **denied from running in the cluster**.
 
-![architecture](https://raw.githubusercontent.com/swoldemi/ecr-repository-compliance-webhook/master/screenshots/architecture.png)
+![architecture](https://raw.githubusercontent.com/swoldemi/amazon-ecr-repository-compliance-webhook/master/screenshots/architecture.png)
 
 ## Usage
 To use this SAR application you will:
@@ -27,41 +26,42 @@ It is recommended that you deploy this Lambda function directly from the AWS Ser
 - CloudFormation via the [AWS CLI](https://aws.amazon.com/cli/)
 - CloudFormation via the [CloudFormation management console](https://aws.amazon.com/cloudformation/)
 
-To deploy this function from AWS GovCloud or regions in China, you must have an account with access to these regions.
+To deploy this function from AWS GovCloud or regions in China, you must have an account with access to these regions. This function is available in all regions that support API Gateway and AWS Lambda. If deploying to regions that do not yet have Elastic Kubernetes Service, it is assumed that you are running EC2 in EKS or some other way, external to AWS. If the table below is missing a region, please open a pull request!
+
 
 |Region                                        |Click and Deploy                                                                                                                                 |
 |----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
-|**US East (Ohio) (us-east-2)**                |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-east-2/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)     |
-|**US East (N. Virginia) (us-east-1)**         |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-east-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)     |
-|**US West (N. California) (us-west-1)**       |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-west-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)     |
-|**US West (Oregon) (us-west-2)**              |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-west-2/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)     |
-|**Asia Pacific (Hong Kong) (ap-east-1)**      |[![][sar-deploy]](https://deploy.serverlessrepo.app/ap-east-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)     |
-|**Asia Pacific (Mumbai) (ap-south-1)**        |[![][sar-deploy]](https://deploy.serverlessrepo.app/ap-south-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)    |
-|**Asia Pacific (Seoul) (ap-northeast-2)**     |[![][sar-deploy]](https://deploy.serverlessrepo.app/ap-northeast-2/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)|
-|**Asia Pacific (Singapore)	(ap-southeast-1)** |[![][sar-deploy]](https://deploy.serverlessrepo.app/ap-southeast-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)|
-|**Asia Pacific (Sydney) (ap-southeast-2)**    |[![][sar-deploy]](https://deploy.serverlessrepo.app/ap-southeast-2/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)|
-|**Asia Pacific (Tokyo) (ap-northeast-1)**     |[![][sar-deploy]](https://deploy.serverlessrepo.app/ap-northeast-1?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook) |
-|**Canada (Central)	(ca-central-1)**           |[![][sar-deploy]](https://deploy.serverlessrepo.app/ca-central-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)  |
-|**EU (Frankfurt) (eu-central-1)**             |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-central-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)  |
-|**EU (Ireland)	(eu-west-1)**                  |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-west-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)     |
-|**EU (London) (eu-west-2)**                   |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-west-2/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)     |
-|**EU (Paris) (eu-west-3)**                    |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-west-3/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)     |
-|**EU (Stockholm) (eu-north-1)**               |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-north-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)    |
-|**Middle East (Bahrain) (me-south-1)**        |[![][sar-deploy]](https://deploy.serverlessrepo.app/me-south-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)    |
-|**South America (Sao Paulo) (sa-east-1)**     |[![][sar-deploy]](https://deploy.serverlessrepo.app/sa-east-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook)     |
-|**AWS GovCloud (US-East) (us-gov-east-1)**    |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-gov-east-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook) |
-|**AWS GovCloud (US-West) (us-gov-west-1)**    |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-gov-west-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/ecr-repository-compliance-webhook) |
+|**US East (Ohio) (us-east-2)**                |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-east-2/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
+|**US East (N. Virginia) (us-east-1)**         |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-east-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
+|**US West (N. California) (us-west-1)**       |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-west-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
+|**US West (Oregon) (us-west-2)**              |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-west-2/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
+|**Asia Pacific (Hong Kong) (ap-east-1)**      |[![][sar-deploy]](https://deploy.serverlessrepo.app/ap-east-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
+|**Asia Pacific (Mumbai) (ap-south-1)**        |[![][sar-deploy]](https://deploy.serverlessrepo.app/ap-south-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)    |
+|**Asia Pacific (Seoul) (ap-northeast-2)**     |[![][sar-deploy]](https://deploy.serverlessrepo.app/ap-northeast-2/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)|
+|**Asia Pacific (Singapore)	(ap-southeast-1)** |[![][sar-deploy]](https://deploy.serverlessrepo.app/ap-southeast-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)|
+|**Asia Pacific (Sydney) (ap-southeast-2)**    |[![][sar-deploy]](https://deploy.serverlessrepo.app/ap-southeast-2/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)|
+|**Asia Pacific (Tokyo) (ap-northeast-1)**     |[![][sar-deploy]](https://deploy.serverlessrepo.app/ap-northeast-1?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook) |
+|**Canada (Central)	(ca-central-1)**           |[![][sar-deploy]](https://deploy.serverlessrepo.app/ca-central-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)  |
+|**EU (Frankfurt) (eu-central-1)**             |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-central-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)  |
+|**EU (Ireland)	(eu-west-1)**                  |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-west-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
+|**EU (London) (eu-west-2)**                   |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-west-2/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
+|**EU (Paris) (eu-west-3)**                    |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-west-3/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
+|**EU (Stockholm) (eu-north-1)**               |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-north-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)    |
+|**Middle East (Bahrain) (me-south-1)**        |[![][sar-deploy]](https://deploy.serverlessrepo.app/me-south-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)    |
+|**South America (Sao Paulo) (sa-east-1)**     |[![][sar-deploy]](https://deploy.serverlessrepo.app/sa-east-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
+|**AWS GovCloud (US-East) (us-gov-east-1)**    |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-gov-east-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook) |
+|**AWS GovCloud (US-West) (us-gov-west-1)**    |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-gov-west-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook) |
 
 ### 2. Configuration
 After deploying the SAR application from the SAR console you need to.
 1. Authenticate with your cluster. EKS example w/ AWS CLI: `aws eks update-kubeconfig --name your-clusters-name --region your-clusters-region`
 2. `kubectl apply -f validatingwebhook.yaml` provided [here](./validatingwebhook.yaml) to deploy the `ValidatingWebhookConfiguration`. Make any necessary additions. This webhook only validates `Pod`s.
 2. `kubectl create ns test-namespace && kubectl apply -f mydeployment.yaml` provided [here](./mydeployment.yaml) to deploy a sample `Deployment`. Change the image to be whatever image you would like to test. Ensure your nodes have permission to pull from the ECR repository.
-3. `kubectl get ev -n test-namespace` to see if there are any `FailedCreate` events as a result of the `Deployment`'s `ReplicaSet` triggeting a failure from the `ValidatingWebhookConfiguration` when trying to create Pods.
+3. `kubectl get ev -n test-namespace` to see if there are any `FailedCreate` events as a result of the `Deployment`'s `ReplicaSet` triggering a failure from the `ValidatingWebhookConfiguration` when trying to create Pods.
 Example: `Error creating: admission webhook "ecrpolicies.amazonaws.com" denied the request: webhook: no ecr images found in pod specification`
 
 ## Contributing
-Have an idea for a feature to enhance this serverless application? Open an [issue](https://github.com/swoldemi/ecr-repository-compliance-webhook/issues) or [pull request](https://github.com/swoldemi/ecr-repository-compliance-webhook/pulls)!
+Have an idea for a feature to enhance this serverless application? Open an [issue](https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook/issues) or [pull request](https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook/pulls)!
 
 ### Development
 This application has been developed, built, and testing against [Go 1.14](https://golang.org/dl/), the latest version of the [Serverless Application Model CLI](https://github.com/awslabs/aws-sam-cli), and the latest version of the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html), Kubernetes version 1.14, Kubernetes version 1.15, and [kubectl 1.17](https://kubernetes.io/docs/tasks/tools/install-kubectl/). A [Makefile](./Makefile) has been provided for convenience.
