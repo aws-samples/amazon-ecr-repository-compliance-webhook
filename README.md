@@ -1,4 +1,4 @@
-![](https://codebuild.us-east-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiWGYzaDl0TDdOV0NEa3E2Z2xtUXJwakZOSENXWWNyNlQzNFhsOW1NaUJlYjdXMDVmOEs2bENBNVR4V3FmdG85YXpJL013UTBRcUYyeWlpQXhkODZoMDZjPSIsIml2UGFyYW1ldGVyU3BlYyI6ImExUDltSU5jdTF5UHlsR0giLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
+![](https://codebuild.us-east-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiU1NyMHI4KytFRzhZSUVEY2R0YTlwanBJTk9EdWNYbW93TzdRU3NCbUJ0TFZYMy9jUktROXlUQktEOUVjd0dJSDBWbHNtVjVqSFpaNWxvbTJxd0o4dW53PSIsIml2UGFyYW1ldGVyU3BlYyI6ImgyNlBtRXoyU1ZSNjNWZjYiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
 [![][sar-logo]](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:273450712882:applications~amazon-ecr-repository-compliance-webhook)
 
 [sar-deploy]: https://img.shields.io/badge/Serverless%20Application%20Repository-Deploy%20Now-FF9900?logo=amazon%20aws&style=flat-square
