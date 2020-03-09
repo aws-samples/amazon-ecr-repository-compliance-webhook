@@ -52,6 +52,11 @@ To deploy this function from AWS GovCloud or regions in China, you must have an 
 |**AWS GovCloud (US-East) (us-gov-east-1)**    |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-gov-east-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook) |
 |**AWS GovCloud (US-West) (us-gov-west-1)**    |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-gov-west-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook) |
 
+#### Parameters
+|Name           |Default   |Description                                                       |Required |                 
+|---------------|----------|------------------------------------------------------------------|---------|
+|RegistryRegion |us-east-1 |What AWS region should this Lambda function interact with ECR in? |False    |
+
 ### 2. Configuration
 After deploying the SAR application from the SAR console you need to:
 1. Authenticate with your cluster. For example, for EKS you can use the AWS CLI: `aws eks update-kubeconfig --name your-clusters-name --region your-clusters-region`

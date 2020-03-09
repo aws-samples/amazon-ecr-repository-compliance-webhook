@@ -23,7 +23,7 @@ Globals:
 Parameters:
     RegistryRegion:
       Type: String
-      Description: What AWS region should this Lambda function interact with ECR in?
+      Description: Optional. What AWS region should this Lambda function interact with ECR in?
       Default: us-east-1
     
 Resources:
