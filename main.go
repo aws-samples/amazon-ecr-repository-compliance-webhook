@@ -12,6 +12,13 @@ import (
 	"github.com/swoldemi/amazon-ecr-repository-compliance-webhook/pkg/function"
 )
 
+func getRegistryRegion() *string {
+	if value, ok := os.LookupEnv("REGISTRY_REGION"); ok {
+		return aws.String(value)
+	}
+	return aws.String(os.Getenv("AWS_REGION"))
+}
+
 func main() {
 	log.Infof(
 		"Starting Lambda version %s with handler %s",
@@ -19,20 +26,13 @@ func main() {
 		os.Getenv("_HANDLER"),
 	)
 
-	sess, err := session.NewSessionWithOptions(
-		session.Options{
-			Config: aws.Config{
-				CredentialsChainVerboseErrors: aws.Bool(true),
-			},
-			SharedConfigState: session.SharedConfigEnable,
-		},
-	)
+	sess, err := session.NewSession()
 	if err != nil {
 		log.Fatalf("Error creating session: %v\n", err)
 		return
 	}
 
-	ecrSvc := ecr.New(sess)
+	ecrSvc := ecr.New(sess, &aws.Config{Region: getRegistryRegion()})
 	if err := xray.Configure(xray.Config{LogLevel: "trace"}); err != nil {
 		log.Fatalf("Error configuring X-Ray: %v\n", err)
 		return

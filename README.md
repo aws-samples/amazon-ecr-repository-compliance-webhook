@@ -78,7 +78,6 @@ make destroy # Destroy the CloudFormation stack tied to the app
 ### To Do
 1. [Parameter.String] RegistryID - What registry should this Lambda verify container images for?
 2. [Parameter.CommaDelimitedList] IgnoredNamespaces - What namespaces should be ignored? It is also possible to set matchers on the [`ValidatingWebhookConfiguration`](./validatingwebhook.yaml#L18).
-3. [Parameter.String] RegistryRegion - What region should this Lambda function interact with ECR in?
 3. [Authenticate the apiserver](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#authenticate-apiservers)
 4. Emit metric on deny/pass, to CloudWatch
 5. Move to the admissionregistration.k8s.io/v1 API when EKS supports k8s v1.17 and drops v1.14
