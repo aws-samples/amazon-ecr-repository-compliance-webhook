@@ -32,8 +32,8 @@ func NewContainer(ecrSvc ecriface.ECRAPI) *Container {
 	}
 }
 
-// Handler is a type alias for the Lambda handler's function signatire.
-type Handler func(context.Context, events.APIGatewayProxyRequest) (*v1beta1.AdmissionReview, error)
+// default HTTP status code to return on rejected admission
+const code = 406
 
 // GetHandler returns the function handler for the amazon-ecr-repository-compliance-webhook.
 // Handler currently assumes that requests are sent from a Kubernetes AdmissionController
@@ -44,55 +44,38 @@ func (c *Container) GetHandler() Handler {
 		response := webhook.NewResponseFromRequest(request)
 		if err != nil {
 			log.Errorf("Error creating request from event: %v", err)
-			return logFailure(response.FailValidation, err)
+			return response.FailValidation(code, err)
 		}
 
 		pod, err := request.UnmarshalPod()
 		if err != nil {
 			log.Errorf("Error unmarshalling Pod: %v", err)
-			return logFailure(response.FailValidation, err)
+			return response.FailValidation(code, err)
 		}
 
 		if webhook.InCriticalNamespace(pod) {
 			log.Info("Pod is in critical namespace, automatically passing")
-			return logPass(response.PassValidation), nil
+			return response.PassValidation(), nil
 		}
 
 		repos, err := webhook.ParseRepositories(pod)
 		if err != nil {
 			log.Errorf("Error extracting repositories: %v", err)
-			return logFailure(response.FailValidation, err)
+			return response.FailValidation(code, err)
 		}
 		if len(repos) == 0 {
-			return logFailure(response.FailValidation, ErrImagesNotFound)
+			return response.FailValidation(code, ErrImagesNotFound)
 		}
 
 		compliant, err := c.BatchCheckRepositoryCompliance(ctx, repos)
 		if err != nil {
 			log.Errorf("Error during compliance check: %v", err)
-			return logFailure(response.FailValidation, err)
+			return response.FailValidation(code, err)
 		}
 
 		if !compliant {
-			return logFailure(response.FailValidation, ErrFailedCompliance)
+			return response.FailValidation(code, ErrFailedCompliance)
 		}
-		return logPass(response.PassValidation), nil
+		return response.PassValidation(), nil
 	}
-}
-
-type failureFunc func(int32, error) (*v1beta1.AdmissionReview, error)
-
-const code = 406
-
-func logFailure(f failureFunc, err error) (*v1beta1.AdmissionReview, error) {
-	log.Infof("Got failure code %d and error %v", code, err)
-	event, err := f(code, err)
-	log.Infof("Responding with failed review %#v and error %v", event, err)
-	return event, err
-}
-
-func logPass(f func() *v1beta1.AdmissionReview) *v1beta1.AdmissionReview {
-	event := f()
-	log.Infof("Responding with passed review %#v", event)
-	return event
 }
