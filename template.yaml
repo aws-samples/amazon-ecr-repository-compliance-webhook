@@ -24,8 +24,7 @@ Parameters:
     RegistryRegion:
       Type: String
       Description: Optional. What AWS region should this Lambda function interact with ECR in?
-      Default: us-east-1
-    
+
 Resources:
   ECRRepositoryComplianceWebhookExecutionRole:
     Type: AWS::IAM::Role

@@ -18,7 +18,7 @@ Additionally, If the images do not come from ECR at all, they will be also be **
 ## Usage
 To use this SAR application you will:
 1. Deploy the application
-2. Configure and deploy the `ValidatingWebhookConfiguration` resource into your Kubernetes cluster (EKS or otherwise). The cluster must have this plugin enabled and be have support for the admissionregistration.k8s.io/v1beta1 API. See the official Kubernetes documentation [here](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) for details.
+2. Configure and deploy the `ValidatingWebhookConfiguration` resource into your Kubernetes cluster (EKS or otherwise). The cluster must have this plugin enabled and be have support for the admissionregistration.k8s.io/v1beta1 API. See the official Kubernetes documentation [here](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/) for details. Amazon Elastic Kubernetes Service has [supported Dynamic Admission Controllers since October 12, 2018](https://aws.amazon.com/about-aws/whats-new/2018/10/amazon-eks-enables-support-for-kubernetes-dynamic-admission-cont/).
 
 ### 1. Deploying the Lambda
 It is recommended that you deploy this Lambda function directly from the AWS Serverless Application Repository. It is also possible to deploy this function using:
@@ -53,9 +53,9 @@ To deploy this function from AWS GovCloud or regions in China, you must have an 
 |**AWS GovCloud (US-West) (us-gov-west-1)**    |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-gov-west-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook) |
 
 #### Parameters
-|Name           |Default   |Description                                                       |Required |                 
-|---------------|----------|------------------------------------------------------------------|---------|
-|RegistryRegion |us-east-1 |What AWS region should this Lambda function interact with ECR in? |False    |
+|Name           |Default           |Description                                                               |Required |                 
+|---------------|------------------|------------------------------------------------------------------|-------|
+|RegistryRegion |Function's Region |What AWS region should this Lambda function interact with ECR in? |False  |
 
 ### 2. Configuration
 After deploying the SAR application from the SAR console you need to:
