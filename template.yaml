@@ -4,14 +4,14 @@ Transform: AWS::Serverless-2016-10-31
 Metadata:
   AWS::ServerlessRepo::Application:
     Name: amazon-ecr-repository-compliance-webhook
-    Description: "A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny Pods with container images that don't come from Amazon ECR, don't enforce image tag immutability, or don't enforce scanning on push"
+    Description: "A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny Pods with container images that don't meet your compliance requirements"
     Author: Simon Woldemichael
     SpdxLicenseId: Apache-2.0
     LicenseUrl: LICENSE
     ReadmeUrl: README.md
     Labels: ["kubernetes", "validating", "admission", "webhook", "eks", "ecr"]
     HomePageUrl: https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook
-    SemanticVersion: 1.0.0
+    SemanticVersion: 1.1.0
     SourceCodeUrl: https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook
 
 Globals:

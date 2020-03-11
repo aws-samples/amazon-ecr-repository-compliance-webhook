@@ -2,8 +2,8 @@ package function
 
 import (
 	"context"
-
-	log "github.com/sirupsen/logrus"
+	"fmt"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ecr"
@@ -15,9 +15,11 @@ import (
 // 1. Comes from ECR
 // 2. Has image tag immutability enabled
 // 3. Has image scan on push enabled
-func (c *Container) CheckRepositoryCompliance(ctx context.Context, repository string) (bool, error) {
+// 4. Does not contain any critical vulnerabilities
+func (c *Container) CheckRepositoryCompliance(ctx context.Context, image string) (bool, error) {
+	repo := strings.Split(image, ":")[0]
 	input := &ecr.DescribeRepositoriesInput{
-		RepositoryNames: []*string{aws.String(repository)},
+		RepositoryNames: []*string{aws.String(repo)},
 	}
 	if err := input.Validate(); err != nil {
 		return false, err
@@ -27,30 +29,36 @@ func (c *Container) CheckRepositoryCompliance(ctx context.Context, repository st
 		return false, err
 	}
 	if len(output.Repositories) == 0 {
-		log.Errorf("No repositories named '%s' found", repository)
-		return false, nil
+		return false, fmt.Errorf("no repositories named '%s' found", repo)
 	}
 	r := output.Repositories[0]
-	if aws.StringValue(r.ImageTagMutability) == ecr.ImageTagMutabilityMutable || !aws.BoolValue(r.ImageScanningConfiguration.ScanOnPush) {
-		log.Errorf("Repository '%s' is not compliant", repository)
-		return false, nil
+	if aws.StringValue(r.ImageTagMutability) == ecr.ImageTagMutabilityMutable {
+		return false, fmt.Errorf("repository '%s' does not have image tag immutability enabled", repo)
+	}
+	if !aws.BoolValue(r.ImageScanningConfiguration.ScanOnPush) {
+		return false, fmt.Errorf("repository '%s' does not have image scan on push enabled", repo)
+	}
+	critical, err := c.HasCriticalVulnerabilities(ctx, image)
+	if err != nil {
+		return false, err
+	}
+	if critical {
+		return false, fmt.Errorf("image '%s' contains CRITICAL vulnerabilities", image)
 	}
 	return true, nil
 }
 
 // BatchCheckRepositoryCompliance checks the compliance of a given set of ECR repositories.
 // False is returned if a single repository is not compliant.
-func (c *Container) BatchCheckRepositoryCompliance(ctx context.Context, repos []string) (bool, error) {
+func (c *Container) BatchCheckRepositoryCompliance(ctx context.Context, images []string) (bool, error) {
 	g, ctx := errgroup.WithContext(ctx)
-	compliances := make([]bool, len(repos))
+	compliances := make([]bool, len(images))
 
-	for i, repo := range repos {
-		i, repo := i, repo
+	for i, image := range images {
+		i, image := i, image
 		g.Go(func() error {
-			compliant, err := c.CheckRepositoryCompliance(ctx, repo)
-			if err == nil {
-				compliances[i] = compliant
-			}
+			compliant, err := c.CheckRepositoryCompliance(ctx, image)
+			compliances[i] = compliant
 			return err
 		})
 	}
@@ -64,4 +72,39 @@ func (c *Container) BatchCheckRepositoryCompliance(ctx context.Context, repos []
 		}
 	}
 	return true, nil
+}
+
+// HasCriticalVulnerabilities checks if a container image contains for 'CRITICAL' vulnerabilities.
+func (c *Container) HasCriticalVulnerabilities(ctx context.Context, image string) (bool, error) {
+	var (
+		segments  = strings.Split(image, ":")
+		repo, tag = segments[0], segments[1]
+		found     = false
+	)
+	input := &ecr.DescribeImageScanFindingsInput{
+		ImageId: &ecr.ImageIdentifier{
+			ImageTag: aws.String(tag),
+		},
+		RepositoryName: aws.String(repo),
+	}
+	if err := input.Validate(); err != nil {
+		return true, err
+	}
+
+	pager := func(out *ecr.DescribeImageScanFindingsOutput, lastPage bool) bool {
+		if found {
+			return true // break out of paging if we've already found a critical vuln.
+		}
+		for _, finding := range out.ImageScanFindings.Findings {
+			if aws.StringValue(finding.Severity) == ecr.FindingSeverityCritical {
+				found = true
+			}
+		}
+		return lastPage
+	}
+
+	if err := c.ECR.DescribeImageScanFindingsPagesWithContext(ctx, input, pager); err != nil {
+		return true, err
+	}
+	return found, nil
 }

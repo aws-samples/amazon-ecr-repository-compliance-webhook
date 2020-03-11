@@ -105,3 +105,24 @@ const ReviewWithOneImage = `{
 		"dryRun": false
 	}
 }`
+
+// ReviewWithBadRequest is an AdmissionReview with a bad request.
+// TODO: Populate so test doesn't just fail at decoding step.
+const ReviewWithBadRequest = `{
+	"kind": "AdmissionReview",
+	"apiVersion": "admission.k8s.io/v1beta1",
+	"request": {
+		"uid": "e77141b6-6033-11ea-8d6a-0ac25c990f4a",
+	}
+}`
+
+
+
+// ReviewWithNoUID is an AdmissionReview with a bad request and no UID.
+const ReviewWithNoUID = `{
+	"kind": "AdmissionReview",
+	"apiVersion": "admission.k8s.io/v1beta1",
+	"request": {
+		"uid": "",
+	}
+}`

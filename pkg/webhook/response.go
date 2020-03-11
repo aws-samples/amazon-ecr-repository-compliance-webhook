@@ -7,9 +7,29 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// ErrMissingFailure ...
-var ErrMissingFailure = errors.New("webhook: reached invalid state, no failure reaon found")
 
+var (
+	// ErrMissingFailure ...
+	ErrMissingFailure = errors.New("webhook: reached invalid state, no failure reaon found")
+	
+	// ErrBadRequest ...
+	ErrBadRequest = errors.New("webhook: bad request")
+	
+	// BadRequestResponse ...
+	BadRequestResponse = func(err error) (*v1beta1.AdmissionReview, error) {
+		return &v1beta1.AdmissionReview{
+			Response: &v1beta1.AdmissionResponse {
+				Allowed: false,
+				Result: &metav1.Status{
+					Status:  metav1.StatusFailure,
+					Message: err.Error(),
+					Reason: metav1.StatusReasonBadRequest,
+					Code:   400,
+				},
+			},
+		}, nil
+	}
+)
 // Response encapsulates the AdmissionResponse sent to API Gateway.
 type Response struct {
 	Admission *v1beta1.AdmissionResponse
@@ -17,12 +37,18 @@ type Response struct {
 
 // NewResponseFromRequest creates a Response from a Request.
 // Assumes request came from Kubernetes and contains UID.
-func NewResponseFromRequest(r *Request) *Response {
+func NewResponseFromRequest(r *Request) (*Response, error){
+	if r == nil || (r != nil && r.Admission == nil){
+		return nil, ErrBadRequest
+	}
+	if r.Admission != nil && r.Admission.UID == "" {
+		return nil, ErrBadRequest
+	}
 	return &Response{
 		Admission: &v1beta1.AdmissionResponse{
 			UID: r.Admission.UID,
 		},
-	}
+	}, nil
 }
 
 // FailValidation populates the AdmissionResponse with the failure contents
@@ -49,7 +75,7 @@ func (r *Response) PassValidation() *v1beta1.AdmissionReview {
 	r.Admission.Allowed = true
 	r.Admission.Result = &metav1.Status{
 		Status:  metav1.StatusSuccess,
-		Message: "pod contains compliant ecr repositories",
+		Message: "pod contains compliant ecr repositories and images",
 		Code:    200,
 	}
 	return respond(r.Admission)

@@ -33,18 +33,21 @@ func NewContainer(ecrSvc ecriface.ECRAPI) *Container {
 }
 
 // default HTTP status code to return on rejected admission
-const code = 406
+const code = 406 // NotAcceptable
 
 // GetHandler returns the function handler for the amazon-ecr-repository-compliance-webhook.
-// Handler currently assumes that requests are sent from a Kubernetes AdmissionController
-// (i.e. the UID in the AdmissionReview exists).
 func (c *Container) GetHandler() Handler {
 	return func(ctx context.Context, event events.APIGatewayProxyRequest) (*v1beta1.AdmissionReview, error) {
 		request, err := webhook.NewRequestFromEvent(event)
-		response := webhook.NewResponseFromRequest(request)
 		if err != nil {
 			log.Errorf("Error creating request from event: %v", err)
-			return response.FailValidation(code, err)
+			return webhook.BadRequestResponse(err)
+		}
+
+		response, err := webhook.NewResponseFromRequest(request)
+		if err != nil {
+			log.Errorf("Error crafting response from request: %v", err)
+			return webhook.BadRequestResponse(err)
 		}
 
 		pod, err := request.UnmarshalPod()

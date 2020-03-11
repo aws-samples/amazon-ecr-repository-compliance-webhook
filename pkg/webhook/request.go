@@ -113,7 +113,7 @@ func ParseRepositories(pod *corev1.Pod) ([]string, error) {
 	)
 	for _, c := range containers {
 		if c.Image != "" && strings.Contains(c.Image, amazonawscom) {
-			repos = append(repos, strings.SplitN(strings.Split(c.Image, ":")[0], "/", 2)[1])
+			repos = append(repos, strings.SplitN(c.Image, "/", 2)[1])
 		}
 	}
 	return repos, nil

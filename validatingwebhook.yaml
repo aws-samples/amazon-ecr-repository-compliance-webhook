@@ -5,7 +5,7 @@ metadata:
   labels:
     app: amazon-ecr-repository-compliance-webhook
 webhooks:
-  - name: ecrpolicies.amazonaws.com
+  - name: admission.ecr.amazonaws.com
     timeoutSeconds: 8
     failurePolicy: Fail # v1beta1 default is Ignore 
     clientConfig:
