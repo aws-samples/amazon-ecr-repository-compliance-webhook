@@ -67,6 +67,7 @@ func (c *Container) GetHandler() Handler {
 			return response.FailValidation(code, err)
 		}
 		if len(repos) == 0 {
+			log.Errorf("No repositories found: %v", ErrImagesNotFound)
 			return response.FailValidation(code, ErrImagesNotFound)
 		}
 
@@ -77,6 +78,7 @@ func (c *Container) GetHandler() Handler {
 		}
 
 		if !compliant {
+			log.Error("Repository is not compliant")
 			return response.FailValidation(code, ErrFailedCompliance)
 		}
 		return response.PassValidation(), nil

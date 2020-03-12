@@ -87,3 +87,9 @@ sar-public:
 		--region us-east-1 \
 		--application-id arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook \
 		--statements Principals=*,Actions=Deploy
+
+.PHONY: manual-qa
+manual-qa:
+	kubectl delete deployment test -n test-namespace && \
+		kubectl apply -f mydeployment.yaml && \
+		kubectl get ev -n test-namespace --sort-by=.metadata.creationTimestamp
