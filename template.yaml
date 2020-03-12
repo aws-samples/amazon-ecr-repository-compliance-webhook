@@ -21,9 +21,13 @@ Globals:
       AllowOrigin: "'*'"
 
 Parameters:
-    RegistryRegion:
-      Type: String
-      Description: Optional. What AWS region should this Lambda function interact with ECR in?
+  RegistryRegion:
+    Type: String
+    Description: Optional. What AWS region should this Lambda function interact with ECR in?
+    Default: ""
+
+Conditions:
+  HasRegistryRegion: !Not [!Equals [!Ref RegistryRegion, ""]]
 
 Resources:
   ECRRepositoryComplianceWebhookExecutionRole:
@@ -68,8 +72,8 @@ Resources:
       Role: !GetAtt ECRRepositoryComplianceWebhookExecutionRole.Arn
       Timeout: 15
       Environment:
-          Variables:
-            REGISTRY_REGION: !Ref RegistryRegion
+        Variables:
+          REGISTRY_REGION: !If [ HasRegistryRegion, !Ref RegistryRegion, !Ref "AWS::NoValue"]
       Events:
         ValidationEvent:
           Type: HttpApi
