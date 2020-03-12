@@ -38,5 +38,10 @@ func main() {
 		return
 	}
 	xray.AWS(ecrSvc.Client)
-	lambda.Start(function.NewContainer(ecrSvc).GetHandler().WithLogging())
+	lambda.Start(
+		function.NewContainer(ecrSvc).
+			GetHandler().
+			WithLogging().
+			WithProxiedResponse(),
+	)
 }
