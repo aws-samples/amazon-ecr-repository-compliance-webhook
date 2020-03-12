@@ -7,29 +7,28 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-
 var (
 	// ErrMissingFailure ...
 	ErrMissingFailure = errors.New("webhook: reached invalid state, no failure reaon found")
-	
+
 	// ErrBadRequest ...
 	ErrBadRequest = errors.New("webhook: bad request")
-	
-	// BadRequestResponse ...
-	BadRequestResponse = func(err error) (*v1beta1.AdmissionReview, error) {
-		return &v1beta1.AdmissionReview{
-			Response: &v1beta1.AdmissionResponse {
-				Allowed: false,
-				Result: &metav1.Status{
-					Status:  metav1.StatusFailure,
-					Message: err.Error(),
-					Reason: metav1.StatusReasonBadRequest,
-					Code:   400,
-				},
-			},
-		}, nil
-	}
 )
+
+// BadRequestResponse ...
+func BadRequestResponse(err error) (*v1beta1.AdmissionReview, error) {
+	response := &v1beta1.AdmissionResponse{
+		Allowed: false,
+		Result: &metav1.Status{
+			Status:  metav1.StatusFailure,
+			Message: err.Error(),
+			Reason:  metav1.StatusReasonBadRequest,
+			Code:    400,
+		},
+	}
+	return respond(response), nil
+}
+
 // Response encapsulates the AdmissionResponse sent to API Gateway.
 type Response struct {
 	Admission *v1beta1.AdmissionResponse
@@ -37,8 +36,8 @@ type Response struct {
 
 // NewResponseFromRequest creates a Response from a Request.
 // Assumes request came from Kubernetes and contains UID.
-func NewResponseFromRequest(r *Request) (*Response, error){
-	if r == nil || (r != nil && r.Admission == nil){
+func NewResponseFromRequest(r *Request) (*Response, error) {
+	if r == nil || (r != nil && r.Admission == nil) {
 		return nil, ErrBadRequest
 	}
 	if r.Admission != nil && r.Admission.UID == "" {
