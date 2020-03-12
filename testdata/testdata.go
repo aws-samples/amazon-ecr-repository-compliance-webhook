@@ -116,8 +116,6 @@ const ReviewWithBadRequest = `{
 	}
 }`
 
-
-
 // ReviewWithNoUID is an AdmissionReview with a bad request and no UID.
 const ReviewWithNoUID = `{
 	"kind": "AdmissionReview",

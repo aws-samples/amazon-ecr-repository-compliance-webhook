@@ -59,8 +59,8 @@ func TestHandler(t *testing.T) {
 			name: "BadRequestFailure",
 			args: args{
 				shouldCheckVuln: false,
-				repo: nil,
-				event: eventWithBadRequest(),
+				repo:            nil,
+				event:           eventWithBadRequest(),
 			},
 			status:  metav1.StatusFailure,
 			wantErr: true,
@@ -69,8 +69,8 @@ func TestHandler(t *testing.T) {
 			name: "BadRequestNoUIDFailure",
 			args: args{
 				shouldCheckVuln: false,
-				repo: nil,
-				event: eventWithNoUID(),
+				repo:            nil,
+				event:           eventWithNoUID(),
 			},
 			status:  metav1.StatusFailure,
 			wantErr: true,
@@ -203,6 +203,10 @@ func TestHandler(t *testing.T) {
 			t.Logf("Got review body: %#+v", review)
 			require.Nil(t, err)
 			require.Equal(t, tt.status, review.Response.Result.Status)
+			if tt.wantErr {
+				require.GreaterOrEqual(t, review.Response.Result.Code, int32(400))
+				require.Less(t, review.Response.Result.Code, int32(500))
+			}
 			ecrSvc.AssertExpectations(t)
 		})
 	}
@@ -213,6 +217,7 @@ var base = events.APIGatewayProxyRequest{
 	HTTPMethod: "POST",
 	Headers:    map[string]string{"Content-Type": "application/json"},
 }
+
 func eventWithNoUID() events.APIGatewayProxyRequest {
 	base.Body = testdata.ReviewWithNoUID
 	return base
