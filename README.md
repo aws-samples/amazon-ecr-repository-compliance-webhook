@@ -26,7 +26,7 @@ It is recommended that you deploy this Lambda function directly from the AWS Ser
 - CloudFormation via the [AWS CLI](https://aws.amazon.com/cli/)
 - CloudFormation via the [CloudFormation management console](https://aws.amazon.com/cloudformation/)
 
-To deploy this function from AWS GovCloud or regions in China, you must have an account with access to these regions. This function is available in all regions that support API Gateway, AWS Lambda, and Amazon ECR. If the table below is missing a region, please open a pull request!
+This function has been made available in all 18 commercial AWS regions that support AWS SAR. It is also possible to deploy the Lambda function in the GovCloud and China regions, if you have access to those regions.
 
 
 |Region                                        |Click and Deploy                                                                                                                                 |
@@ -49,11 +49,9 @@ To deploy this function from AWS GovCloud or regions in China, you must have an 
 |**EU (Stockholm) (eu-north-1)**               |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-north-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)    |
 |**Middle East (Bahrain) (me-south-1)**        |[![][sar-deploy]](https://deploy.serverlessrepo.app/me-south-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)    |
 |**South America (Sao Paulo) (sa-east-1)**     |[![][sar-deploy]](https://deploy.serverlessrepo.app/sa-east-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
-|**AWS GovCloud (US-East) (us-gov-east-1)**    |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-gov-east-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook) |
-|**AWS GovCloud (US-West) (us-gov-west-1)**    |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-gov-west-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook) |
 
 #### Parameters
-|Name           |Default           |Description                                                               |Required |                 
+|Name           |Default           |Description                                                       |Required |                 
 |---------------|------------------|------------------------------------------------------------------|-------|
 |RegistryRegion |Function's Region |What AWS region should this Lambda function interact with ECR in? |False  |
 
