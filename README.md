@@ -26,7 +26,7 @@ It is recommended that you deploy this Lambda function directly from the AWS Ser
 - CloudFormation via the [AWS CLI](https://aws.amazon.com/cli/)
 - CloudFormation via the [CloudFormation management console](https://aws.amazon.com/cloudformation/)
 
-This function has been made available in all 18 commercial AWS regions that support AWS SAR. It is also possible to deploy the Lambda function in the GovCloud and China regions, if you have access to those regions.
+This function has been made available in 17 of the 18 commercial AWS regions that support AWS SAR. As of March 2020, Bahrain (me-south-1) does not yet support API Gateway. It is also possible to deploy the Lambda function in the GovCloud and China regions, if you have access to those regions.
 
 
 |Region                                        |Click and Deploy                                                                                                                                 |
@@ -47,7 +47,6 @@ This function has been made available in all 18 commercial AWS regions that supp
 |**EU (London) (eu-west-2)**                   |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-west-2/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
 |**EU (Paris) (eu-west-3)**                    |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-west-3/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
 |**EU (Stockholm) (eu-north-1)**               |[![][sar-deploy]](https://deploy.serverlessrepo.app/eu-north-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)    |
-|**Middle East (Bahrain) (me-south-1)**        |[![][sar-deploy]](https://deploy.serverlessrepo.app/me-south-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)    |
 |**South America (Sao Paulo) (sa-east-1)**     |[![][sar-deploy]](https://deploy.serverlessrepo.app/sa-east-1/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
 
 #### Parameters

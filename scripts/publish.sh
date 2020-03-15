@@ -20,7 +20,6 @@ declare -a REGIONS=(
     "eu-west-2"
     "eu-west-3"
     "eu-north-1"
-    "me-south-1"
     "sa-east-1"
 )
 
