@@ -7,15 +7,13 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+// Errors returned when a bad request is received or a failure reason is not provided.
 var (
-	// ErrMissingFailure ...
-	ErrMissingFailure = errors.New("webhook: reached invalid state, no failure reaon found")
-
-	// ErrBadRequest ...
-	ErrBadRequest = errors.New("webhook: bad request")
+	ErrMissingFailure = errors.New("webhook: reached invalid state, no failure reason found")
+	ErrBadRequest     = errors.New("webhook: bad request")
 )
 
-// BadRequestResponse ...
+// BadRequestResponse is the response returned to the cluster when a bad request is sent.
 func BadRequestResponse(err error) (*v1beta1.AdmissionReview, error) {
 	response := &v1beta1.AdmissionResponse{
 		Allowed: false,
@@ -35,9 +33,8 @@ type Response struct {
 }
 
 // NewResponseFromRequest creates a Response from a Request.
-// Assumes request came from Kubernetes and contains UID.
 func NewResponseFromRequest(r *Request) (*Response, error) {
-	if r == nil || (r != nil && r.Admission == nil) {
+	if r == nil || r.Admission == nil {
 		return nil, ErrBadRequest
 	}
 	if r.Admission != nil && r.Admission.UID == "" {

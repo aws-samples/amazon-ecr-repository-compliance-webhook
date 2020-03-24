@@ -21,12 +21,6 @@ var (
 	codecs        = serializer.NewCodecFactory(runtimeScheme)
 	deserializer  = codecs.UniversalDeserializer()
 
-	// ErrInvalidContentType ...
-	ErrInvalidContentType = errors.New("webhook: invalid content type; expected application/json")
-
-	// ErrMissingContentType ...
-	ErrMissingContentType = errors.New("webhook: missing content-type header")
-
 	// ErrObjectNotFound ...
 	ErrObjectNotFound = errors.New("webhook: request did not include object")
 
@@ -58,14 +52,6 @@ type Request struct {
 
 // NewRequestFromEvent creates a Request from the APIGatewayProxyRequest.
 func NewRequestFromEvent(event events.APIGatewayProxyRequest) (*Request, error) {
-	val, ok := event.Headers["Content-Type"]
-	if !ok {
-		return nil, ErrMissingContentType
-	}
-	if val != "application/json" {
-		return nil, ErrInvalidContentType
-	}
-
 	var review v1beta1.AdmissionReview
 	if err := DeserializeReview(event.Body, &review); err != nil {
 		return nil, err
