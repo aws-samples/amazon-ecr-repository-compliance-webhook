@@ -124,3 +124,10 @@ const ReviewWithNoUID = `{
 		"uid": "",
 	}
 }`
+
+// ECR container image URIs.
+const (
+	UntaggedImage = "273450712882.dkr.ecr.us-east-2.amazonaws.com/namespace/repo@sha256:e5e2a3236e64483c50dd2811e46e9cd49c67e82271e60d112ca69a075fc23005"
+	TaggedImage   = "273450712882.dkr.ecr.us-east-2.amazonaws.com/namespace/repo:40d6072"
+	NoNamespace   = "273450712882.dkr.ecr.us-east-2.amazonaws.com/repo:40d6072"
+)

@@ -9,25 +9,14 @@ phases:
     runtime-versions:
       golang: 1.14
     commands:
-      - pip3 install -U aws-sam-cli cfn-lint aws-sam-translator
+      - pip3 install -U aws-sam-cli && sam --version
       - mkdir -p $ROOTPATH
-      - go get golang.org/x/lint/golint
-      - go get mvdan.cc/gofumpt/gofumports
-      - go get mvdan.cc/gofumpt
-      - curl -L https://git.io/vp6lP | bash -s -- -b /go/bin
-      - go get github.com/golangci/golangci-lint/cmd/golangci-lint
-      - go get github.com/gojp/goreportcard/cmd/goreportcard-cli
-      - go mod tidy && go mod download
+      - make install-tools
       - ln -s "${CODEBUILD_SRC_DIR}" $ROOTPATH
-
-  pre_build:
-    commands:
-      - sam --version && cfn-lint --version
-      - make tmpl check test
 
   build:
     commands:
-      - make build && make sam-package
+      - make clean && make
 
   post_build:
     commands:

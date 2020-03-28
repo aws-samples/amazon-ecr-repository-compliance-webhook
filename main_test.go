@@ -215,7 +215,7 @@ func TestHandler(t *testing.T) {
 var base = events.APIGatewayProxyRequest{
 	Path:       "/check-image-compliance",
 	HTTPMethod: "POST",
-	Headers:    map[string]string{"Content-Type": "application/json"},
+	Headers:    map[string]string{"content-type": "application/json"},
 }
 
 func eventWithNoUID() events.APIGatewayProxyRequest {

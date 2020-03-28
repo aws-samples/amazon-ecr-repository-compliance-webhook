@@ -12,12 +12,10 @@ import (
 	"k8s.io/api/admission/v1beta1"
 )
 
+// Errors returned when a validation expectation fails.
 var (
-	// ErrFailedCompliance ...
 	ErrFailedCompliance = errors.New("webhook: repository fails ecr criteria")
-
-	// ErrImagesNotFound ...
-	ErrImagesNotFound = errors.New("webhook: no ecr images found in pod specification")
+	ErrImagesNotFound   = errors.New("webhook: no ecr images found in pod specification")
 )
 
 // Container contains the dependencies and business logic for the amazon-ecr-repository-compliance-webhook Lambda function.
@@ -61,17 +59,13 @@ func (c *Container) GetHandler() Handler {
 			return response.PassValidation(), nil
 		}
 
-		repos, err := webhook.ParseRepositories(pod)
-		if err != nil {
-			log.Errorf("Error extracting repositories: %v", err)
-			return response.FailValidation(code, err)
-		}
-		if len(repos) == 0 {
-			log.Errorf("No repositories found: %v", ErrImagesNotFound)
+		images := webhook.ParseImages(pod)
+		if len(images) == 0 {
+			log.Error(ErrImagesNotFound)
 			return response.FailValidation(code, ErrImagesNotFound)
 		}
 
-		compliant, err := c.BatchCheckRepositoryCompliance(ctx, repos)
+		compliant, err := c.BatchCheckRepositoryCompliance(ctx, images)
 		if err != nil {
 			log.Errorf("Error during compliance check: %v", err)
 			return response.FailValidation(code, err)

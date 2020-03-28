@@ -57,8 +57,8 @@ This function has been made available in 17 of the 18 commercial AWS regions tha
 ### 2. Configuration
 After deploying the SAR application from the SAR console you need to:
 1. Authenticate with your cluster. For example, for EKS you can use the AWS CLI: `aws eks update-kubeconfig --name your-clusters-name --region your-clusters-region`
-2. Run `kubectl apply -f validatingwebhook.yaml` to deploy the `ValidatingWebhookConfiguration`. The YAML file is provided [here](./validatingwebhook.yaml). Remember to update `webhooks.clientConfig.url` with your API Gateway endpoint. Make any necessary additions to match namespaces/labels for resources that are deployed. This webhook only validates Pods.
-3. Run `kubectl create ns test-namespace && kubectl apply -f mydeployment.yaml` to create a sample `Deployment`. The sample is provided [here](./mydeployment.yaml). Change the image to be any image you would like to test. Ensure your nodes have permission to pull from the ECR repository.
+2. Run `kubectl apply -f validatingwebhook.yaml` to deploy the `ValidatingWebhookConfiguration`. The YAML file is provided [here](./deploy/validatingwebhook.yaml). Remember to update `webhooks.clientConfig.url` with your API Gateway endpoint. Make any necessary additions to match namespaces/labels for resources that are deployed. This webhook only validates Pods.
+3. Run `kubectl create ns test-namespace && kubectl apply -f mydeployment.yaml` to create a sample `Deployment`. The sample is provided [here](./deploy/mydeployment.yaml). Change the image to be any image you would like to test. Ensure your nodes have permission to pull from the ECR repository.
 4. Run `kubectl get ev -n test-namespace` to see if there are any `FailedCreate` events as a result of the `Deployment`'s `ReplicaSet` triggering a failure from the `ValidatingWebhookConfiguration` when trying to create Pods. For example: `Error creating: admission webhook "admission.ecr.amazonaws.com" denied the request: webhook: no ecr images found in pod specification`
 
 ## Contributing
@@ -79,7 +79,7 @@ make destroy       # Destroy the CloudFormation stack tied to the SAR app
 
 ### To Do
 1. [Parameter.String] RegistryID - What registry should this Lambda verify container images for?
-2. [Parameter.CommaDelimitedList] IgnoredNamespaces - What namespaces should be ignored? It is also possible to set matchers on the [`ValidatingWebhookConfiguration`](./validatingwebhook.yaml#L18).
+2. [Parameter.CommaDelimitedList] IgnoredNamespaces - What namespaces should be ignored? It is also possible to set matchers on the [`ValidatingWebhookConfiguration`](./deploy/validatingwebhook.yaml#L18).
 3. [Authenticate the apiserver](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#authenticate-apiservers)
 4. Emit metric on deny/pass, to Amazon CloudWatch
 5. Move to the admissionregistration.k8s.io/v1 API when EKS supports k8s v1.17 and drops v1.14, but maintain backwards compatibility

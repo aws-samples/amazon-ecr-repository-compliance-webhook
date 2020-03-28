@@ -7,7 +7,7 @@ metadata:
 webhooks:
   - name: admission.ecr.amazonaws.com
     timeoutSeconds: 8
-    failurePolicy: Fail # v1beta1 default is Ignore 
+    failurePolicy: Fail # v1beta1 default is Ignore
     clientConfig:
       url: https://<YOUR_APIGATEWAY_ID>.execute-api.<YOUR_REGION>.amazonaws.com/Prod/check-image-compliance
     rules:

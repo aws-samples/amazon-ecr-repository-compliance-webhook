@@ -16,27 +16,23 @@ import (
 
 const amazonawscom = "amazonaws.com"
 
+// Errors returned when a request or resource expectation fails.
 var (
-	runtimeScheme = runtime.NewScheme()
-	codecs        = serializer.NewCodecFactory(runtimeScheme)
-	deserializer  = codecs.UniversalDeserializer()
-
-	// ErrObjectNotFound ...
-	ErrObjectNotFound = errors.New("webhook: request did not include object")
-
-	// ErrUnexpectedResource ...
+	ErrInvalidContentType = errors.New("webhook: invalid content type; expected application/json")
+	ErrMissingContentType = errors.New("webhook: missing content-type header")
+	ErrObjectNotFound     = errors.New("webhook: request did not include object")
 	ErrUnexpectedResource = errors.New("webhook: expected pod resource")
+	ErrInvalidAdmission   = errors.New("webhook: admission request was nil")
+	ErrInvalidContainer   = errors.New("webhook: container image is not from ecr")
+)
 
-	// ErrInvalidAdmission ...
-	ErrInvalidAdmission = errors.New("webhook: admission request was nil")
-
-	// ErrInvalidContainer ...
-	ErrInvalidContainer = errors.New("webhook: container image is not from ecr")
-
+var (
+	runtimeScheme     = runtime.NewScheme()
+	codecs            = serializer.NewCodecFactory(runtimeScheme)
+	deserializer      = codecs.UniversalDeserializer()
 	ignoredNamespaces = []string{
 		metav1.NamespaceSystem,
 	}
-
 	podDefault = &schema.GroupVersionKind{
 		Group:   "core",
 		Version: "v1",
@@ -52,8 +48,15 @@ type Request struct {
 
 // NewRequestFromEvent creates a Request from the APIGatewayProxyRequest.
 func NewRequestFromEvent(event events.APIGatewayProxyRequest) (*Request, error) {
+	val, ok := event.Headers["content-type"]
+	if !ok {
+		return nil, ErrMissingContentType
+	}
+	if val != "application/json" {
+		return nil, ErrInvalidContentType
+	}
 	var review v1beta1.AdmissionReview
-	if err := DeserializeReview(event.Body, &review); err != nil {
+	if _, _, err := deserializer.Decode([]byte(event.Body), nil, &review); err != nil {
 		return nil, err
 	}
 	return &Request{Admission: review.Request}, nil
@@ -90,26 +93,41 @@ func InCriticalNamespace(pod *corev1.Pod) bool {
 	return false
 }
 
-// ParseRepositories returns the repositories in the Pod spec which contain
-// images that are from Amazon ECR.
-func ParseRepositories(pod *corev1.Pod) ([]string, error) {
+// ParseImages returns the container images in the Pod spec
+// that originate from an Amazon ECR repository.
+func ParseImages(pod *corev1.Pod) []string {
 	var (
-		repos      []string
+		images     []string
 		containers = append(pod.Spec.Containers, pod.Spec.InitContainers...)
 	)
 	for _, c := range containers {
-		if c.Image != "" && strings.Contains(c.Image, amazonawscom) {
-			repos = append(repos, strings.SplitN(c.Image, "/", 2)[1])
+		parsed := parse(c.Image)
+		if c.Image != "" && strings.Contains(c.Image, amazonawscom) && parsed != "" && !contains(images, parsed) {
+			images = append(images, parsed)
 		}
 	}
-	return repos, nil
+	return images
 }
 
-// DeserializeReview is a helper for deserializing a JSON encoded string
-// into a Kubernetes Admission Review.
-func DeserializeReview(body string, out *v1beta1.AdmissionReview) error {
-	if _, _, err := deserializer.Decode([]byte(body), nil, out); err != nil {
-		return err
+// From aws_account_id.dkr.ecr.aws_region.amazonaws.com/repository:tag to repository:tag
+// Or aws_account_id.dkr.ecr.aws_region.amazonaws.com/repository@sha256:hash to repository@sha256:hash
+func parse(image string) string {
+	if !strings.Contains(image, "/") {
+		return ""
 	}
-	return nil
+	base := strings.SplitN(image, "/", 2)
+	if len(base) < 1 {
+		return ""
+	}
+	return base[1]
+}
+
+// check that we already haven't seen this image before
+func contains(images []string, image string) bool {
+	for _, r := range images {
+		if r == image {
+			return true
+		}
+	}
+	return false
 }

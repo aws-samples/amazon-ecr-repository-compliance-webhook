@@ -74,7 +74,7 @@ Resources:
       Timeout: 15
       Environment:
         Variables:
-          REGISTRY_REGION: !If [ HasRegistryRegion, !Ref RegistryRegion, !Ref "AWS::NoValue"]
+          REGISTRY_REGION: !If [HasRegistryRegion, !Ref RegistryRegion, !Ref "AWS::NoValue"]
       Events:
         ValidationEvent:
           Type: HttpApi
@@ -91,9 +91,6 @@ Resources:
       Principal: apigateway.amazonaws.com
 
 Outputs:
-  LambdaFunctionARN:
-    Description: ECRRepositoryComplianceWebhook Lambda Function ARN
-    Value: !GetAtt ECRRepositoryComplianceWebhookFunction.Arn
-  APIGatewayEndpoint:
+  WebhookURL:
     Description: "ValidatingWebhookConfiguration invocation URL"
-    Value: !Sub "https://${ECRRepositoryComplianceWebhookAPIGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+    Value: !Sub "https://${ECRRepositoryComplianceWebhookFunction}.execute-api.${AWS::Region}.amazonaws.com/Prod/check-image-compliance"
