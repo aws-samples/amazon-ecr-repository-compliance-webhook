@@ -16,8 +16,4 @@ phases:
 
   build:
     commands:
-      - make clean && make
-
-  post_build:
-    commands:
-      - chmod +x ./scripts/publish.sh && ./scripts/publish.sh
+      - make clean && make && chmod +x ./scripts/publish.sh && ./scripts/publish.sh

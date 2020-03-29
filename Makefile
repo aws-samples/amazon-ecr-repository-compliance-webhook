@@ -42,7 +42,7 @@ generate-coverage: ${COVERAGE}
 check:
 	gofumports -w -l -e .
 	gofumpt -s -w .
-	golangci-lint run ./... \
+	GOGC=5 golangci-lint run ./... \
 		-E goconst \
 		-E gocyclo \
 		-E gosec  \
