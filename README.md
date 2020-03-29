@@ -68,9 +68,10 @@ Have an idea for a feature to enhance this serverless application? Open an [issu
 This application has been developed, built, and tested against [Go 1.14](https://golang.org/dl/), the latest version of the [Serverless Application Model CLI](https://github.com/awslabs/aws-sam-cli), and the latest version of the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html), Kubernetes version 1.14, Kubernetes version 1.15, and [kubectl 1.17](https://kubernetes.io/docs/tasks/tools/install-kubectl/). A [Makefile](./Makefile) has been provided for convenience.
 
 ```
+make install-tools # Install linting tools
 make check         # Run Go linting tools
 make test          # Run Go tests
-make build         # Build Go binary
+make compile       # Build Go binary
 make sam-package   # Package code and assets into S3 using SAM CLI
 make sam-deploy    # Deploy application using SAM CLI
 make sam-tail-logs # Tail the logs of the running Lambda function
