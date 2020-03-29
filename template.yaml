@@ -11,7 +11,7 @@ Metadata:
     ReadmeUrl: README.md
     Labels: ["kubernetes", "validating", "admission", "webhook", "eks", "ecr"]
     HomePageUrl: https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook
-    SemanticVersion: 1.2.1
+    SemanticVersion: 1.3.1
     SourceCodeUrl: https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook
 
 Globals:
