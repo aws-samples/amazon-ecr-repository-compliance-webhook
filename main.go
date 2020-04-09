@@ -24,7 +24,7 @@ var (
 	svc  = ecr.New(sess, &aws.Config{Region: getRegistryRegion()})
 
 	// Handler is the handler for the validating webhook.
-	Handler = function.NewContainer(svc).GetHandler().WithLogging().WithProxiedResponse()
+	Handler = function.NewContainer(svc).Handler().WithLogging().WithProxiedResponse()
 
 	// Version is the shorted git hash of the binary's source code.
 	// It is injected using the -X linker flag when running `make`

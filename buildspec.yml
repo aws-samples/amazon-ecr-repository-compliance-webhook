@@ -4,6 +4,7 @@ env:
     GOPATH: /go
     GOBIN: /go/bin
     ROOTPATH: /go/src/github.com/swoldemi/amazon-ecr-repository-compliance-webhook
+
 phases:
   install:
     runtime-versions:
@@ -16,4 +17,4 @@ phases:
 
   build:
     commands:
-      - make clean && make && chmod +x ./scripts/publish.sh && ./scripts/publish.sh
+      - make clean && GOGC=10 make && make sam-package && chmod +x ./scripts/publish.sh && ./scripts/publish.sh

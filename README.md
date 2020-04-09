@@ -28,7 +28,6 @@ It is recommended that you deploy this Lambda function directly from the AWS Ser
 
 This function has been made available in 17 of the 18 commercial AWS regions that support AWS SAR. As of March 2020, Bahrain (me-south-1) does not yet support API Gateway. It is also possible to deploy the Lambda function in the GovCloud and China regions, if you have access to those regions.
 
-
 |Region                                        |Click and Deploy                                                                                                                                 |
 |----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
 |**US East (Ohio) (us-east-2)**                |[![][sar-deploy]](https://deploy.serverlessrepo.app/us-east-2/?app=arn:aws:serverlessrepo:us-east-1:273450712882:applications/amazon-ecr-repository-compliance-webhook)     |
@@ -57,8 +56,8 @@ This function has been made available in 17 of the 18 commercial AWS regions tha
 ### 2. Configuration
 After deploying the SAR application from the SAR console you need to:
 1. Authenticate with your cluster. For example, for EKS you can use the AWS CLI: `aws eks update-kubeconfig --name your-clusters-name --region your-clusters-region`
-2. Run `kubectl apply -f validatingwebhook.yaml` to deploy the `ValidatingWebhookConfiguration`. The YAML file is provided [here](./deploy/validatingwebhook.yaml). Remember to update `webhooks.clientConfig.url` with your API Gateway endpoint. Make any necessary additions to match namespaces/labels for resources that are deployed. This webhook only validates Pods.
-3. Run `kubectl create ns test-namespace && kubectl apply -f mydeployment.yaml` to create a sample `Deployment`. The sample is provided [here](./deploy/mydeployment.yaml). Change the image to be any image you would like to test. Ensure your nodes have permission to pull from the ECR repository.
+2. Run `kubectl apply -f validatingwebhook.yaml` to deploy the `ValidatingWebhookConfiguration`. The YAML file is provided [here](https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook/blob/master/deploy/validatingwebhook.yaml). Remember to update `webhooks.clientConfig.url` with your API Gateway endpoint. Make any necessary additions to match namespaces/labels for resources that are deployed. This webhook only validates Pods.
+3. Run `kubectl create ns test-namespace && kubectl apply -f mydeployment.yaml` to create a sample `Deployment`. The sample is provided [here](https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook/blob/master/deploy/mydeployment.yaml). Change the image to be any image you would like to test. Ensure your nodes have permission to pull from the ECR repository.
 4. Run `kubectl get ev -n test-namespace` to see if there are any `FailedCreate` events as a result of the `Deployment`'s `ReplicaSet` triggering a failure from the `ValidatingWebhookConfiguration` when trying to create Pods. For example: `Error creating: admission webhook "admission.ecr.amazonaws.com" denied the request: webhook: no ecr images found in pod specification`
 
 ## Contributing
@@ -69,19 +68,20 @@ This application has been developed, built, and tested against [Go 1.14](https:/
 
 ```
 make install-tools # Install linting tools
-make check         # Run Go linting tools
+make lint          # Run Go linting tools
 make test          # Run Go tests
-make compile       # Build Go binary
+make compile       # Compile Go binary
 make sam-package   # Package code and assets into S3 using SAM CLI
 make sam-deploy    # Deploy application using SAM CLI
-make sam-tail-logs # Tail the logs of the running Lambda function
-make destroy       # Destroy the CloudFormation stack tied to the SAR app
+make sam-logs      # Tail the logs of the running Lambda function
+make destroy-stack # Destroy the CloudFormation stack tied to the SAR app
 ```
 
+Running `make` will 
 ### To Do
 1. [Parameter.String] RegistryID - What registry should this Lambda verify container images for?
 2. [Parameter.CommaDelimitedList] IgnoredNamespaces - What namespaces should be ignored? It is also possible to set matchers on the [`ValidatingWebhookConfiguration`](./deploy/validatingwebhook.yaml#L18).
-3. [Authenticate the apiserver](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#authenticate-apiservers)
+3. [Authenticate the apiserver](https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook/blob/master/deploy/validatingwebhook.yaml#L18-L20)
 4. Emit metric on deny/pass, to Amazon CloudWatch
 5. Move to the admissionregistration.k8s.io/v1 API when EKS supports k8s v1.17 and drops v1.14, but maintain backwards compatibility
 

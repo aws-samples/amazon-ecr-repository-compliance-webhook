@@ -4,7 +4,7 @@ BUCKET_PREFIX=swoldemi
 APPLICATION=amazon-ecr-repository-compliance-webhook
 ACCOUNT=273450712882
 declare -a REGIONS=(
-    "us-east-2" 
+    "us-east-2"
     "us-east-1"
     "us-west-1"
     "us-west-2"
@@ -26,9 +26,9 @@ declare -a REGIONS=(
 publish_all_regions()
 {   
     for REGION in "${REGIONS[@]}"
-    do  
+    do
         echo Deploying to region $REGION
-	    sam package --template-file template.yaml --s3-bucket $BUCKET_PREFIX-$REGION --output-template-file packaged.yaml
+        sam package --template-file template.yaml --s3-bucket $BUCKET_PREFIX-$REGION --output-template-file packaged.yaml
         sam publish --region $REGION --template packaged.yaml
     done
 

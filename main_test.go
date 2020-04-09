@@ -47,7 +47,7 @@ func TestHandler(t *testing.T) {
 		event           events.APIGatewayProxyRequest
 	}
 	ecrSvc := new(mockECRClient)
-	h := function.NewContainer(ecrSvc).GetHandler()
+	h := function.NewContainer(ecrSvc).Handler()
 
 	tests := []struct {
 		name    string
