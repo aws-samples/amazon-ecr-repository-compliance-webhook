@@ -1,4 +1,4 @@
-INTEG_S3_BUCKET=swoldemi-tmp # Replace with your S3 bucket
+S3_BUCKET=swoldemi-tmp # Replace with your S3 bucket
 DEFAULT_REGION=us-east-2 # Replace with your region
 
 FUNCTION_NAME=amazon-ecr-repository-compliance-webhook
@@ -41,7 +41,7 @@ integ-test:
 
 sam-package: $(BINARY) $(TEMPALTE)
 	sam validate --template-file ${TEMPLATE}
-	sam package --region ${DEFAULT_REGION} --template-file ${TEMPLATE} --s3-bucket ${INTEG_S3_BUCKET} --output-template-file ${PACKAGED_TEMPLATE}
+	sam package --region ${DEFAULT_REGION} --template-file ${TEMPLATE} --s3-bucket ${S3_BUCKET} --output-template-file ${PACKAGED_TEMPLATE}
 
 generate-coverage: $(COVERAGE)
 	go tool cover -html ${COVERAGE} -o ${COVERAGE_REPORT}
@@ -58,7 +58,7 @@ lint:
 sam-deploy: $(TEMPLATE)
 	sam deploy --region ${DEFAULT_REGION} \
 		--template-file ${TEMPLATE} \
-		--s3-bucket ${INTEG_S3_BUCKET} \
+		--s3-bucket ${S3_BUCKET} \
 		--stack-name ${FUNCTION_NAME} \
 		--capabilities CAPABILITY_IAM
 
