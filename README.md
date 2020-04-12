@@ -77,9 +77,8 @@ make sam-logs      # Tail the logs of the running Lambda function
 make destroy-stack # Destroy the CloudFormation stack tied to the SAR app
 ```
 
-Running `make` will 
 ### To Do
-1. [Parameter.String] RegistryID - What registry should this Lambda verify container images for?
+1. [Parameter.String] RegistryID - What registry should this Lambda verify container images for? Good for cross-account interactions.
 2. [Parameter.CommaDelimitedList] IgnoredNamespaces - What namespaces should be ignored? It is also possible to set matchers on the [`ValidatingWebhookConfiguration`](./deploy/validatingwebhook.yaml#L18).
 3. [Authenticate the apiserver](https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook/blob/master/deploy/validatingwebhook.yaml#L18-L20)
 4. Emit metric on deny/pass, to Amazon CloudWatch

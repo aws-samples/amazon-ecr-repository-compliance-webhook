@@ -12,7 +12,7 @@ import (
 // Handler is a type alias for the Lambda handler's function signature.
 type Handler func(context.Context, events.APIGatewayProxyRequest) (*v1beta1.AdmissionReview, error)
 
-// ProxiedHandler is a handler that has been wrapped to respond to a API Gateway Proxy Integration.
+// ProxiedHandler is a handler that has been wrapped to respond with an API Gateway Proxy Integration.
 // TODO: Refactor to use interface, return type of WithProxiedResponse middleware will be cleaner
 type ProxiedHandler func(ctx context.Context, event events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error)
 
