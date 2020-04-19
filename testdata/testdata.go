@@ -112,7 +112,7 @@ const ReviewWithBadRequest = `{
 	"kind": "AdmissionReview",
 	"apiVersion": "admission.k8s.io/v1beta1",
 	"request": {
-		"uid": "e77141b6-6033-11ea-8d6a-0ac25c990f4a",
+		"uid": "e77141b6-6033-11ea-8d6a-0ac25c990f4a"
 	}
 }`
 
@@ -121,13 +121,18 @@ const ReviewWithNoUID = `{
 	"kind": "AdmissionReview",
 	"apiVersion": "admission.k8s.io/v1beta1",
 	"request": {
-		"uid": "",
+		"uid": ""
 	}
 }`
 
 // ECR container image URIs.
+// Valid references here: https://docs.aws.amazon.com/general/latest/gr/ecr.html
+// Repositories in China use a .com.cn API endpoint, but image references keep .com: https://docs.amazonaws.cn/general/latest/gr/ecr.html
 const (
 	UntaggedImage = "273450712882.dkr.ecr.us-east-2.amazonaws.com/namespace/repo@sha256:e5e2a3236e64483c50dd2811e46e9cd49c67e82271e60d112ca69a075fc23005"
 	TaggedImage   = "273450712882.dkr.ecr.us-east-2.amazonaws.com/namespace/repo:40d6072"
 	NoNamespace   = "273450712882.dkr.ecr.us-east-2.amazonaws.com/repo:40d6072"
+	CNImage       = "273450712882.dkr.ecr.cn-north-1.amazonaws.com/namespace/repo:40d6072"
+	FIPSImage     = "273450712882.dkr.ecr-fips.us-east-2.amazonaws.com/namespace/repo:40d6072"
+	AliasedImage  = "myaccountalias.dkr.ecr-fips.us-east-2.amazonaws.com/namespace/repo:40d6072"
 )

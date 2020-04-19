@@ -3,6 +3,7 @@ package webhook
 import (
 	"encoding/json"
 	"errors"
+	"regexp"
 	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -14,7 +15,9 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 )
 
-const amazonawscom = "amazonaws.com"
+// ECRImageRegex matches ECR images that come from registries in commercial regions, regions in China, and registries using the FIPS endpoints.
+// For endpoints, see: https://docs.aws.amazon.com/general/latest/gr/ecr.html
+var ECRImageRegex = regexp.MustCompile(`(^[a-zA-Z0-9][a-zA-Z0-9-_]*)\.dkr\.(ecr|ecr\-fips)\.([a-z][a-z0-9-_]*)\.amazonaws\.com(\.cn)?.*`)
 
 // Errors returned when a request or resource expectation fails.
 var (
@@ -83,7 +86,7 @@ func (r *Request) UnmarshalPod() (*corev1.Pod, error) {
 }
 
 // InCriticalNamespace checks that the request was for a resource
-// that is being deployed into a cricial name space; e.g. kube-system.
+// that is being deployed into a critical namespace; e.g. kube-system.
 func InCriticalNamespace(pod *corev1.Pod) bool {
 	for _, n := range ignoredNamespaces {
 		if pod.Namespace == n {
@@ -101,16 +104,19 @@ func ParseImages(pod *corev1.Pod) []string {
 		containers = append(pod.Spec.Containers, pod.Spec.InitContainers...)
 	)
 	for _, c := range containers {
-		parsed := parse(c.Image)
-		if c.Image != "" && strings.Contains(c.Image, amazonawscom) && parsed != "" && !contains(images, parsed) {
-			images = append(images, parsed)
+		// TODO: using the first matching group (AWS account ID), we can restrict by registry as well
+		if ECRImageRegex.Match([]byte(c.Image)) {
+			parsed := parse(c.Image)
+			if !contains(images, parsed) {
+				images = append(images, parsed)
+			}
 		}
 	}
 	return images
 }
 
-// From aws_account_id.dkr.ecr.aws_region.amazonaws.com/repository:tag to repository:tag
-// Or aws_account_id.dkr.ecr.aws_region.amazonaws.com/repository@sha256:hash to repository@sha256:hash
+// From aws_account_id.dkr.ecr(-fips).aws_region.amazonaws.com(cn)/repository:tag to repository:tag
+// Or aws_account_id.dkr.ecr(-fips).aws_region.amazonaws.com(cn)/repository@sha256:hash to repository@sha256:hash
 func parse(image string) string {
 	if !strings.Contains(image, "/") {
 		return ""

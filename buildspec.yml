@@ -10,7 +10,7 @@ phases:
     runtime-versions:
       golang: 1.14
     commands:
-      - pip3 install -U aws-sam-cli && sam --version
+      - pip3 install -U aws-sam-cli aws-sam-translator && sam --version
       - mkdir -p $ROOTPATH
       - make install-tools
       - ln -s "${CODEBUILD_SRC_DIR}" $ROOTPATH

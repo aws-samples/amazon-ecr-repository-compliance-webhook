@@ -56,6 +56,7 @@ lint:
 
 .PHONY: sam-deploy
 sam-deploy: $(TEMPLATE)
+	sam validate --template-file ${TEMPLATE}
 	sam deploy --region ${DEFAULT_REGION} \
 		--template-file ${TEMPLATE} \
 		--s3-bucket ${S3_BUCKET} \

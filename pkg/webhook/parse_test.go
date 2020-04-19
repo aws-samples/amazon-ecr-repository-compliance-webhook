@@ -10,14 +10,19 @@ import (
 
 func TestParseRepositories(t *testing.T) {
 	var (
-		untaggedImagePod = newPodWithImage(testdata.UntaggedImage)
-		taggedImagePod   = newPodWithImage(testdata.TaggedImage)
-		duplicatePods    = newPodWithImage(testdata.TaggedImage)
-		noNamespace      = newPodWithImage(testdata.NoNamespace)
-		noImages         = newPodWithImage("")
+		untaggedImagePod   = newPodWithImage(testdata.UntaggedImage)
+		taggedImagePod     = newPodWithImage(testdata.TaggedImage)
+		cnImagePod         = newPodWithImage(testdata.CNImage)
+		fipsImagePod       = newPodWithImage(testdata.FIPSImage)
+		duplicateImagesPod = newPodWithImage(testdata.TaggedImage)
+		twoImagesPod       = newPodWithImage(testdata.TaggedImage)
+		noNamespacePod     = newPodWithImage(testdata.NoNamespace)
+		aliasedImagePod    = newPodWithImage(testdata.AliasedImage)
+		noImages           = newPodWithImage("")
+		badImage           = newPodWithImage("elgoog/sselortsid")
 	)
-	duplicatePods.Spec.Containers = append(duplicatePods.Spec.Containers, duplicatePods.Spec.Containers...)
-
+	duplicateImagesPod.Spec.Containers = append(duplicateImagesPod.Spec.Containers, duplicateImagesPod.Spec.Containers...)
+	twoImagesPod.Spec.Containers = append(twoImagesPod.Spec.Containers, untaggedImagePod.Spec.Containers...)
 	tests := []struct {
 		name string
 		pod  *corev1.Pod
@@ -25,9 +30,14 @@ func TestParseRepositories(t *testing.T) {
 	}{
 		{"UntaggedImage", untaggedImagePod, []string{"namespace/repo@sha256:e5e2a3236e64483c50dd2811e46e9cd49c67e82271e60d112ca69a075fc23005"}},
 		{"TaggedImage", taggedImagePod, []string{"namespace/repo:40d6072"}},
-		{"Duplicates", duplicatePods, []string{"namespace/repo:40d6072"}},
-		{"NoNamespace", noNamespace, []string{"repo:40d6072"}},
+		{"CNImage", cnImagePod, []string{"namespace/repo:40d6072"}},
+		{"FIPSImage", fipsImagePod, []string{"namespace/repo:40d6072"}},
+		{"Duplicates", duplicateImagesPod, []string{"namespace/repo:40d6072"}},
+		{"TwoImages", twoImagesPod, []string{"namespace/repo:40d6072", "namespace/repo@sha256:e5e2a3236e64483c50dd2811e46e9cd49c67e82271e60d112ca69a075fc23005"}},
+		{"NoNamespace", noNamespacePod, []string{"repo:40d6072"}},
+		{"Aliased", aliasedImagePod, []string{"namespace/repo:40d6072"}},
 		{"NoImages", noImages, nil},
+		{"BadImage", badImage, nil},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -1,5 +1,8 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
+Description: |
+  A Kubernetes ValidatingWebhookConfiguration and serverless backend:
+  Deny Pods with container images that don't meet your compliance requirements.
 
 Metadata:
   AWS::ServerlessRepo::Application:
@@ -13,12 +16,6 @@ Metadata:
     HomePageUrl: https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook
     SemanticVersion: 1.3.1
     SourceCodeUrl: https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook
-
-Globals:
-  Api:
-    Cors:
-      AllowHeaders: "'Access-Control-Allow-Headers, Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization'"
-      AllowOrigin: "'*'"
 
 Parameters:
   RegistryRegion:
@@ -93,4 +90,4 @@ Resources:
 Outputs:
   WebhookURL:
     Description: "ValidatingWebhookConfiguration invocation URL"
-    Value: !Sub "https://${ECRRepositoryComplianceWebhookFunction}.execute-api.${AWS::Region}.amazonaws.com/Prod/check-image-compliance"
+    Value: !Sub "https://${ECRRepositoryComplianceWebhookAPIGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/check-image-compliance"
