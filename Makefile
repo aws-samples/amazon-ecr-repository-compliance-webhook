@@ -40,7 +40,6 @@ integ-test:
 	go test -v -race -timeout 30s -tags integration -count 1
 
 sam-package: $(BINARY) $(TEMPALTE)
-	sam validate --template-file ${TEMPLATE}
 	sam package --region ${DEFAULT_REGION} --template-file ${TEMPLATE} --s3-bucket ${S3_BUCKET} --output-template-file ${PACKAGED_TEMPLATE}
 
 generate-coverage: $(COVERAGE)
@@ -48,6 +47,7 @@ generate-coverage: $(COVERAGE)
 
 .PHONY: lint
 lint:
+	sam validate --template-file ${TEMPLATE}
 	gofumports -w -l -e . && gofumpt -s -w .
 	golangci-lint run ./... \
 		-E goconst -E gocyclo -E gosec  \
@@ -56,7 +56,6 @@ lint:
 
 .PHONY: sam-deploy
 sam-deploy: $(TEMPLATE)
-	sam validate --template-file ${TEMPLATE}
 	sam deploy --region ${DEFAULT_REGION} \
 		--template-file ${TEMPLATE} \
 		--s3-bucket ${S3_BUCKET} \
@@ -75,22 +74,25 @@ sam-logs:
 .PHONY: destroy-stack
 destroy-stack:
 	aws --region ${DEFAULT_REGION} cloudformation delete-stack --stack-name ${FUNCTION_NAME}
+	aws --region ${DEFAULT_REGION} cloudformation wait stack-delete-complete --stack-name ${STACK_NAME}
 
 .PHONY: get-deps
 get-deps:
-	go get $(shell go list -f "{{if not (or .Main .Indirect)}}{{.Path}}{{end}}" -m all)
-	go mod tidy
-
+	go get -d $(shell go list -f "{{if not (or .Main .Indirect)}}{{.Path}}{{end}}" -m all)
+	go mod tidy && go mod verify
 .PHONY: clean
 clean:
 	- rm -f ${BINARY} ${COVERAGE} ${COVERAGE_REPORT} ${PACKAGED_TEMPLATE}
 
 .PHONY: install-tools
 install-tools:
+	pip3 install -U aws-sam-cli aws-sam-translator
+
 	# Hacky workaround to prevent adding these tools to our go.mod; see https://github.com/golang/go/issues/37225 and https://github.com/golang/go/issues/30515#issuecomment-582044819
-	(cd ..; GO111MODULE=on go get -u mvdan.cc/gofumpt/gofumports)
-	(cd ..; GO111MODULE=on go get -u mvdan.cc/gofumpt)
-	(cd ..; GO111MODULE=on go get -u github.com/golangci/golangci-lint/cmd/golangci-lint)
+	(cd ..; GO111MODULE=on go get mvdan.cc/gofumpt/gofumports)
+	(cd ..; GO111MODULE=on go get mvdan.cc/gofumpt)
+	(cd ..; GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint)
+	(cd ..; GO111MODULE=on go get github.com/frapposelli/wwhrd)
 
 .PHONY: manual-qa
 manual-qa:
