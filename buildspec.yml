@@ -10,11 +10,15 @@ phases:
     runtime-versions:
       golang: 1.14
     commands:
-      - pip3 install -U aws-sam-cli aws-sam-translator && sam --version
-      - mkdir -p $ROOTPATH
-      - make install-tools
+      - mkdir -p "$ROOTPATH"
+      - make install-tools && sam --version
       - ln -s "${CODEBUILD_SRC_DIR}" $ROOTPATH
-
+  pre_build:
+    commands:
+      - go mod vendor && wwhrd check -q && rm -rf vendor
   build:
     commands:
-      - make clean && GOGC=10 make && make sam-package && chmod +x ./scripts/publish.sh && ./scripts/publish.sh
+      - make clean && make && make sam-package
+  post_build:
+    commands:
+      - chmod +x ./scripts/publish.sh && ./scripts/publish.sh

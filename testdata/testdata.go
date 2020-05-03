@@ -107,7 +107,6 @@ const ReviewWithOneImage = `{
 }`
 
 // ReviewWithBadRequest is an AdmissionReview with a bad request.
-// TODO: Populate so test doesn't just fail at decoding step.
 const ReviewWithBadRequest = `{
 	"kind": "AdmissionReview",
 	"apiVersion": "admission.k8s.io/v1beta1",

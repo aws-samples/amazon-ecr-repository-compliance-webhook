@@ -3,7 +3,7 @@ DEFAULT_REGION=us-east-2 # Replace with your region
 
 FUNCTION_NAME=amazon-ecr-repository-compliance-webhook
 COVERAGE=coverage.out
-COVERAGE_REPORT=coverage.html
+COVERAGE_REPORT=report.html
 BINARY=main
 TEMPLATE=template.yaml
 PACKAGED_TEMPLATE=packaged.yaml
@@ -29,30 +29,25 @@ compile:
 		-o ${BINARY} main.go
 
 .PHONY: test
-test: unit-test integ-test
+test: unit-test
 
 unit-test: 
-	go test -v -race -timeout 30s -count 1 -coverprofile ${COVERAGE} ./...
-
-# TODO
-.PHONY: integ-test
-integ-test:
-	go test -v -race -timeout 30s -tags integration -count 1
+	go test -v -timeout 30s -count 1 -covermode=count -coverprofile ${COVERAGE} ./...
 
 sam-package: $(BINARY) $(TEMPALTE)
-	sam package --region ${DEFAULT_REGION} --template-file ${TEMPLATE} --s3-bucket ${S3_BUCKET} --output-template-file ${PACKAGED_TEMPLATE}
+	sam package --region ${DEFAULT_REGION} \
+		--template-file ${TEMPLATE} \
+		--s3-bucket ${S3_BUCKET} \
+		--output-template-file ${PACKAGED_TEMPLATE}
 
 generate-coverage: $(COVERAGE)
 	go tool cover -html ${COVERAGE} -o ${COVERAGE_REPORT}
+	python -m SimpleHTTPServer 8000 -o ${COVERAGE_REPORT}
 
 .PHONY: lint
 lint:
 	sam validate --template-file ${TEMPLATE}
 	gofumports -w -l -e . && gofumpt -s -w .
-	golangci-lint run ./... \
-		-E goconst -E gocyclo -E gosec  \
-		-E maligned -E misspell -E nakedret \
-		-E unconvert -E unparam -E dupl
 
 .PHONY: sam-deploy
 sam-deploy: $(TEMPLATE)
@@ -65,21 +60,22 @@ sam-deploy: $(TEMPLATE)
 .PHONY: sam-publish
 sam-publish: $(PACKAGED_TEMPLATE)
 	# See ./scripts/publish.sh
-	sam publish --region ${DEFAULT_REGION} --template ${PACKAGED_TEMPLATE}
+	sam publish --template ${PACKAGED_TEMPLATE} --region ${DEFAULT_REGION}
 
 .PHONY: sam-logs
 sam-logs:
-	sam logs --region ${DEFAULT_REGION} --name ${FUNCTION_NAME} --tail
+	sam logs --name ${FUNCTION_NAME} --tail --region ${DEFAULT_REGION}
 
 .PHONY: destroy-stack
 destroy-stack:
-	aws --region ${DEFAULT_REGION} cloudformation delete-stack --stack-name ${FUNCTION_NAME}
-	aws --region ${DEFAULT_REGION} cloudformation wait stack-delete-complete --stack-name ${STACK_NAME}
+	aws cloudformation delete-stack --stack-name ${FUNCTION_NAME} --region ${DEFAULT_REGION}
+	aws cloudformation wait stack-delete-complete --stack-name ${FUNCTION_NAME} --region ${DEFAULT_REGION}
 
 .PHONY: get-deps
 get-deps:
 	go get -d $(shell go list -f "{{if not (or .Main .Indirect)}}{{.Path}}{{end}}" -m all)
 	go mod tidy && go mod verify
+
 .PHONY: clean
 clean:
 	- rm -f ${BINARY} ${COVERAGE} ${COVERAGE_REPORT} ${PACKAGED_TEMPLATE}
@@ -88,10 +84,10 @@ clean:
 install-tools:
 	pip3 install -U aws-sam-cli aws-sam-translator
 
-	# Hacky workaround to prevent adding these tools to our go.mod; see https://github.com/golang/go/issues/37225 and https://github.com/golang/go/issues/30515#issuecomment-582044819
+	# Hacky workaround to prevent adding these tools to our go.mod;
+	# see https://github.com/golang/go/issues/37225 and https://github.com/golang/go/issues/30515#issuecomment-582044819
 	(cd ..; GO111MODULE=on go get mvdan.cc/gofumpt/gofumports)
 	(cd ..; GO111MODULE=on go get mvdan.cc/gofumpt)
-	(cd ..; GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/golangci-lint)
 	(cd ..; GO111MODULE=on go get github.com/frapposelli/wwhrd)
 
 .PHONY: manual-qa
