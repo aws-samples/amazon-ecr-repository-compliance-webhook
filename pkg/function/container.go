@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 // Package function contains library units for the amazon-ecr-repository-compliance-webhook Lambda function.
 package function
 
