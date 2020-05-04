@@ -3,7 +3,7 @@
 BUCKET_PREFIX=swoldemi
 APPLICATION=amazon-ecr-repository-compliance-webhook
 ACCOUNT=273450712882
-declare -a REGIONS=(
+readonly REGIONS=(
     "us-east-2"
     "us-east-1"
     "us-west-1"
@@ -27,9 +27,9 @@ publish_all_regions()
 {   
     for REGION in "${REGIONS[@]}"
     do
-        echo Deploying to region $REGION
+        echo Deploying to region "$REGION"
         sam package --template-file template.yaml --s3-bucket $BUCKET_PREFIX-$REGION --output-template-file packaged.yaml
-        sam publish --region $REGION --template packaged.yaml
+        sam publish --region "$REGION" --template packaged.yaml
     done
 
     aws serverlessrepo put-application-policy \
@@ -38,8 +38,8 @@ publish_all_regions()
         --statements Principals=*,Actions=Deploy
 }
 
-echo "On branch `basename $CODEBUILD_WEBHOOK_HEAD_REF`"
-if [ "`basename $CODEBUILD_WEBHOOK_HEAD_REF`" = "master" ]
+echo "On branch $(basename $CODEBUILD_WEBHOOK_HEAD_REF)"
+if [ "$(basename $CODEBUILD_WEBHOOK_HEAD_REF)" = "master" ]
 then 
     publish_all_regions
 else

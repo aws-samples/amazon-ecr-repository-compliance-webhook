@@ -1,8 +1,7 @@
-![](https://codebuild.us-east-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiU1NyMHI4KytFRzhZSUVEY2R0YTlwanBJTk9EdWNYbW93TzdRU3NCbUJ0TFZYMy9jUktROXlUQktEOUVjd0dJSDBWbHNtVjVqSFpaNWxvbTJxd0o4dW53PSIsIml2UGFyYW1ldGVyU3BlYyI6ImgyNlBtRXoyU1ZSNjNWZjYiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
 [![][sar-logo]](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:273450712882:applications~amazon-ecr-repository-compliance-webhook)
 
-[sar-deploy]: https://img.shields.io/badge/Serverless%20Application%20Repository-Deploy%20Now-FF9900?logo=amazon%20aws&style=flat-square
-[sar-logo]: https://img.shields.io/badge/Serverless%20Application%20Repository-View-FF9900?logo=amazon%20aws&style=flat-square
+[sar-deploy]: https://img.shields.io/badge/Serverless%20Application%20Repository-Deploy%20Now-blue?style=flat-square
+[sar-logo]: https://img.shields.io/badge/Serverless%20Application%20Repository-View-blue?style=flat-square
 
 # Amazon ECR Repository Compliance Webhook for Kubernetes
 >A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny Pods with container images that don't meet your compliance requirements
@@ -50,8 +49,9 @@ This function has been made available in 17 of the 18 commercial AWS regions tha
 
 #### Parameters
 |Name           |Default           |Description                                                       |Required |                 
-|---------------|------------------|------------------------------------------------------------------|-------|
-|RegistryRegion |Function's Region |What AWS region should this Lambda function interact with ECR in? |False  |
+|---------------|------------------|------------------------------------------------------------------|---------|
+|RegistryRegion |Function's Region |What AWS region should this Lambda function interact with ECR in? |False    |
+|LogLevel       |INFO              |The log level to set. ["DEBUG", "INFO", "WARN", "ERROR"]          |False    |
 
 ### 2. Configuration
 After deploying the SAR application from the SAR console you need to:
@@ -79,16 +79,15 @@ make destroy-stack # Destroy the CloudFormation stack tied to the SAR app
 
 ### To Do
 1. [Parameter.String] RegistryID - What registry should this Lambda verify container images for? Good for cross-account interactions.
-2. [Parameter.CommaDelimitedList] IgnoredNamespaces - What namespaces should be ignored? It is also possible to set matchers on the [`ValidatingWebhookConfiguration`](./deploy/validatingwebhook.yaml#L18).
-3. [Authenticate the apiserver](https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook/blob/master/deploy/validatingwebhook.yaml#L18-L20)
-4. Emit metric on deny/pass, to Amazon CloudWatch
-5. Move to the admissionregistration.k8s.io/v1 API when EKS supports k8s v1.17 and drops v1.14, but maintain backwards compatibility
+2. [Parameter.CommaDelimitedList] IgnoredNamespaces - What namespaces should be ignored? It is also possible to set matchers on the [`ValidatingWebhookConfiguration`](./deploy/validatingwebhook.yaml).
+3. Emit metric on deny/pass, to Amazon CloudWatch
+4. Support the admissionregistration.k8s.io/v1 API
 
 ## References
 - BanzaiCloud - In-depth introduction to Kubernetes admission webhooks: https://banzaicloud.com/blog/k8s-admission-webhooks/
 - ValidatingWebhookConfiguration API Documentation - https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.10/#validatingwebhookconfiguration-v1beta1-admissionregistration-k8s-io
 - Dynamic Admission Control - https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/
-- Official Kubernetes example: https://github.com/kubernetes/kubernetes/blob/v1.15.0/test/images/webhook/scheme.go
+- Official Kubernetes example: https://github.com/kubernetes/kubernetes/blob/v1.15.0/test/images/webhook/
 
 ## Acknowledgements
 [@jicowan](https://github.com/jicowan) for inspiration: https://github.com/jicowan/ecr-validation-webhook

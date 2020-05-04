@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 // Package webhook contains resources for the ValidatingWebhookConfiguration.
 // Referenced: https://github.com/kubernetes/kubernetes/blob/v1.15.0/test/images/webhook
 package webhook

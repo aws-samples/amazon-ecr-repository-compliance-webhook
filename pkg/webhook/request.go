@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 package webhook
 
 import (
@@ -15,9 +18,10 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 )
 
-// ECRImageRegex matches ECR images that come from registries in commercial regions, regions in China, and registries using the FIPS endpoints.
+// ECRImageRegex matches ECR images that come from registries in commercial regions,
+// regions in China, GovCloud, and registries using FIPS endpoints.
 // For endpoints, see: https://docs.aws.amazon.com/general/latest/gr/ecr.html
-var ECRImageRegex = regexp.MustCompile(`(^[a-zA-Z0-9][a-zA-Z0-9-_]*)\.dkr\.(ecr|ecr\-fips)\.([a-z][a-z0-9-_]*)\.amazonaws\.com(\.cn)?.*`)
+var ECRImageRegex = regexp.MustCompile(`(^[a-zA-Z0-9][a-zA-Z0-9-_]*)\.dkr\.(ecr|ecr-fips)\.([a-z][a-z0-9-_]*)\.amazonaws\.com(\.cn)?.*`)
 
 // Errors returned when a request or resource expectation fails.
 var (
@@ -26,7 +30,6 @@ var (
 	ErrObjectNotFound     = errors.New("webhook: request did not include object")
 	ErrUnexpectedResource = errors.New("webhook: expected pod resource")
 	ErrInvalidAdmission   = errors.New("webhook: admission request was nil")
-	ErrInvalidContainer   = errors.New("webhook: container image is not from ecr")
 )
 
 var (
@@ -104,8 +107,7 @@ func ParseImages(pod *corev1.Pod) []string {
 		containers = append(pod.Spec.Containers, pod.Spec.InitContainers...)
 	)
 	for _, c := range containers {
-		// TODO: using the first matching group (AWS account ID), we can restrict by registry as well
-		if ECRImageRegex.Match([]byte(c.Image)) {
+		if ECRImageRegex.MatchString(c.Image) {
 			parsed := parse(c.Image)
 			if !contains(images, parsed) {
 				images = append(images, parsed)
