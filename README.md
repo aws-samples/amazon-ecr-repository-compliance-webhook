@@ -1,8 +1,7 @@
-![](https://codebuild.us-east-2.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiU1NyMHI4KytFRzhZSUVEY2R0YTlwanBJTk9EdWNYbW93TzdRU3NCbUJ0TFZYMy9jUktROXlUQktEOUVjd0dJSDBWbHNtVjVqSFpaNWxvbTJxd0o4dW53PSIsIml2UGFyYW1ldGVyU3BlYyI6ImgyNlBtRXoyU1ZSNjNWZjYiLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)
 [![][sar-logo]](https://serverlessrepo.aws.amazon.com/applications/arn:aws:serverlessrepo:us-east-1:273450712882:applications~amazon-ecr-repository-compliance-webhook)
 
-[sar-deploy]: https://img.shields.io/badge/Serverless%20Application%20Repository-Deploy%20Now-FF9900?logo=amazon%20aws&style=flat-square
-[sar-logo]: https://img.shields.io/badge/Serverless%20Application%20Repository-View-FF9900?logo=amazon%20aws&style=flat-square
+[sar-deploy]: https://img.shields.io/badge/Serverless%20Application%20Repository-Deploy%20Now-blue?style=flat-square
+[sar-logo]: https://img.shields.io/badge/Serverless%20Application%20Repository-View-blue?style=flat-square
 
 # Amazon ECR Repository Compliance Webhook for Kubernetes
 >A Kubernetes ValidatingWebhookConfiguration and serverless backend: Deny Pods with container images that don't meet your compliance requirements
