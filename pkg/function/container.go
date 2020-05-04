@@ -11,7 +11,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/service/ecr/ecriface"
 	log "github.com/sirupsen/logrus"
-	"github.com/swoldemi/amazon-ecr-repository-compliance-webhook/pkg/webhook"
+	"github.com/aws-samples/amazon-ecr-repository-compliance-webhook/pkg/webhook"
 	"k8s.io/api/admission/v1beta1"
 )
 

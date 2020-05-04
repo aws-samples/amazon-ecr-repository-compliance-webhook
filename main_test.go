@@ -17,8 +17,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"github.com/swoldemi/amazon-ecr-repository-compliance-webhook/pkg/function"
-	"github.com/swoldemi/amazon-ecr-repository-compliance-webhook/testdata"
+	"github.com/aws-samples/amazon-ecr-repository-compliance-webhook/pkg/function"
+	"github.com/aws-samples/amazon-ecr-repository-compliance-webhook/testdata"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 

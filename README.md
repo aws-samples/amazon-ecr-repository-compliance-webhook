@@ -12,7 +12,7 @@ This AWS Serverless Application Repository app will create an Amazon API Gateway
 3. Come from ECR, but do not have image scan on push enabled
 4. Come from ECR, and have image scan on push enabled, but contain `CRITICAL` security vulnerabilities
 
-![architecture](https://raw.githubusercontent.com/swoldemi/amazon-ecr-repository-compliance-webhook/master/screenshots/architecture.png)
+![architecture](https://raw.githubusercontent.com/aws-samples/amazon-ecr-repository-compliance-webhook/master/screenshots/architecture.png)
 
 ## Usage
 To use this SAR application:
@@ -56,12 +56,12 @@ This function has been made available in 17 of the 18 commercial AWS regions tha
 ### 2. Configuration
 After deploying the SAR application from the SAR console you need to:
 1. Authenticate with your cluster. For example, for EKS you can use the AWS CLI: `aws eks update-kubeconfig --name your-clusters-name --region your-clusters-region`
-2. Run `kubectl apply -f validatingwebhook.yaml` to deploy the `ValidatingWebhookConfiguration`. The YAML file is provided [here](https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook/blob/master/deploy/validatingwebhook.yaml). Remember to update `webhooks.clientConfig.url` with your API Gateway endpoint. Make any necessary additions to match namespaces/labels for resources that are deployed. This webhook only validates Pods.
-3. Run `kubectl create ns test-namespace && kubectl apply -f mydeployment.yaml` to create a sample `Deployment`. The sample is provided [here](https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook/blob/master/deploy/mydeployment.yaml). Change the image to be any image you would like to test. Ensure your nodes have permission to pull from the ECR repository.
+2. Run `kubectl apply -f validatingwebhook.yaml` to deploy the `ValidatingWebhookConfiguration`. The YAML file is provided [here](https://github.com/aws-samples/amazon-ecr-repository-compliance-webhook/blob/master/deploy/validatingwebhook.yaml). Remember to update `webhooks.clientConfig.url` with your API Gateway endpoint. Make any necessary additions to match namespaces/labels for resources that are deployed. This webhook only validates Pods.
+3. Run `kubectl create ns test-namespace && kubectl apply -f mydeployment.yaml` to create a sample `Deployment`. The sample is provided [here](https://github.com/aws-samples/amazon-ecr-repository-compliance-webhook/blob/master/deploy/mydeployment.yaml). Change the image to be any image you would like to test. Ensure your nodes have permission to pull from the ECR repository.
 4. Run `kubectl get ev -n test-namespace` to see if there are any `FailedCreate` events as a result of the `Deployment`'s `ReplicaSet` triggering a failure from the `ValidatingWebhookConfiguration` when trying to create Pods. For example: `Error creating: admission webhook "admission.ecr.amazonaws.com" denied the request: webhook: no ecr images found in pod specification`
 
 ## Contributing
-Have an idea for a feature to enhance this serverless application? Open an [issue](https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook/issues) or [pull request](https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook/pulls)!
+Have an idea for a feature to enhance this serverless application? Open an [issue](https://github.com/aws-samples/amazon-ecr-repository-compliance-webhook/issues) or [pull request](https://github.com/aws-samples/amazon-ecr-repository-compliance-webhook/pulls)!
 
 ### Development
 This application has been developed, built, and tested against [Go 1.14](https://golang.org/dl/), the latest version of the [Serverless Application Model CLI](https://github.com/awslabs/aws-sam-cli), and the latest version of the [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html), Kubernetes version 1.14, Kubernetes version 1.15, and [kubectl 1.17](https://kubernetes.io/docs/tasks/tools/install-kubectl/). A [Makefile](./Makefile) has been provided for convenience.
@@ -93,4 +93,4 @@ make destroy-stack # Destroy the CloudFormation stack tied to the SAR app
 [@jicowan](https://github.com/jicowan) for inspiration: https://github.com/jicowan/ecr-validation-webhook
 
 ## License
-[Apache License 2.0](https://spdx.org/licenses/Apache-2.0.html)
+This project is licensed under the [Apache-2.0 License](https://spdx.org/licenses/Apache-2.0.html)

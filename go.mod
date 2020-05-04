@@ -1,4 +1,4 @@
-module github.com/swoldemi/amazon-ecr-repository-compliance-webhook
+module github.com/aws-samples/amazon-ecr-repository-compliance-webhook
 
 go 1.14
 

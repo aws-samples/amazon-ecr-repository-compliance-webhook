@@ -13,9 +13,9 @@ Metadata:
     LicenseUrl: LICENSE
     ReadmeUrl: README.md
     Labels: ["kubernetes", "validating", "admission", "webhook", "eks", "ecr"]
-    HomePageUrl: https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook
+    HomePageUrl: https://github.com/aws-samples/amazon-ecr-repository-compliance-webhook
     SemanticVersion: 1.5.0
-    SourceCodeUrl: https://github.com/swoldemi/amazon-ecr-repository-compliance-webhook
+    SourceCodeUrl: https://github.com/aws-samples/amazon-ecr-repository-compliance-webhook
 
 Parameters:
   RegistryRegion:

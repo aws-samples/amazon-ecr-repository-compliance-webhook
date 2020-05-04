@@ -22,7 +22,7 @@ import (
 	"github.com/aws/aws-xray-sdk-go/xray"
 	"github.com/aws/aws-xray-sdk-go/xraylog"
 	log "github.com/sirupsen/logrus"
-	"github.com/swoldemi/amazon-ecr-repository-compliance-webhook/pkg/function"
+	"github.com/aws-samples/amazon-ecr-repository-compliance-webhook/pkg/function"
 )
 
 func init() {
