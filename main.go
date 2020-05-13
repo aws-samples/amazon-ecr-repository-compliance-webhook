@@ -15,6 +15,7 @@ package main
 import (
 	"os"
 
+	"github.com/aws-samples/amazon-ecr-repository-compliance-webhook/pkg/function"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -22,7 +23,6 @@ import (
 	"github.com/aws/aws-xray-sdk-go/xray"
 	"github.com/aws/aws-xray-sdk-go/xraylog"
 	log "github.com/sirupsen/logrus"
-	"github.com/aws-samples/amazon-ecr-repository-compliance-webhook/pkg/function"
 )
 
 func init() {

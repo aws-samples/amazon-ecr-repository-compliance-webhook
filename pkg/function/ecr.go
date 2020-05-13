@@ -18,7 +18,7 @@ const digestID = "@"
 
 // From repository:tag to repository, tag
 // Or repository@sha256:digest to repository, @sha256:digest
-func parts(image string) (repo string, tagOrDigest string) {
+func parts(image string) (repo, tagOrDigest string) {
 	if strings.Contains(image, digestID) {
 		segments := strings.Split(image, digestID)
 		repo, tagOrDigest = segments[0], digestID+segments[1] // append ampersand for later

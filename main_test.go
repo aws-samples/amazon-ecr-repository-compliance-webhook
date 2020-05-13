@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/aws-samples/amazon-ecr-repository-compliance-webhook/pkg/function"
+	"github.com/aws-samples/amazon-ecr-repository-compliance-webhook/testdata"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/request"
@@ -17,8 +19,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"github.com/aws-samples/amazon-ecr-repository-compliance-webhook/pkg/function"
-	"github.com/aws-samples/amazon-ecr-repository-compliance-webhook/testdata"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
